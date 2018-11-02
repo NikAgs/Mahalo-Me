@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "898179111221",
+    "firebase_url": "https://mahalome-7294f.firebaseio.com",
+    "project_id": "mahalome-7294f",
+    "storage_bucket": "mahalome-7294f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898179111221:android:458917215b3c80c0",
+        "android_client_info": {
+          "package_name": "com.example.mahalome"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "898179111221-fl3o3qqas3376samh9jfufqbh5jkjtfj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBSNQr7jd-EYe7ntkeiRMm6MJFp8Ua7qM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
