@@ -11,9 +11,9 @@ void main() {
   };
 
   runApp(new MaterialApp(
-    title: "Flutter Flat App",
+    title: "Outside theme",
     home: new LoginScreen(),
-    theme: appTheme,
+    theme: loginTheme,
     routes: routes,
   ));
 }
