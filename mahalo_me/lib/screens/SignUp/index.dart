@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'style.dart';
 import '../../components/TextFields/inputField.dart';
 import '../../components/Buttons/textButton.dart';
 import '../../components/Buttons/roundedButton.dart';
 import '../../services/validations.dart';
 import '../../services/authentication.dart';
-import '../../theme/style.dart';
+import '../../theme/style.dart' as Theme;
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key key}) : super(key: key);
@@ -57,7 +56,17 @@ class SignUpScreenState extends State<SignUpScreen> {
         body: new SingleChildScrollView(
           child: new Container(
             padding: new EdgeInsets.all(16.0),
-            decoration: new BoxDecoration(image: backgroundImage),
+            decoration: new BoxDecoration(
+              gradient: new LinearGradient(
+                  colors: [
+                    Theme.ThemeColors.lighterPurple,
+                    Theme.ThemeColors.cyan,
+                  ],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(1.0, 1.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp),
+            ),
             child: new Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -67,11 +76,13 @@ class SignUpScreenState extends State<SignUpScreen> {
                     child: new Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        new Text(
-                          "CREATE ACCOUNT",
-                          textAlign: TextAlign.center,
-                          style: headingStyle,
-                        )
+                        new Text("CREATE ACCOUNT",
+                            textAlign: TextAlign.center,
+                            style: new TextStyle(
+                              color: Colors.white,
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.bold,
+                            ))
                       ],
                     )),
                 new SizedBox(
@@ -88,11 +99,11 @@ class SignUpScreenState extends State<SignUpScreen> {
                                 hintText: "Username",
                                 obscureText: false,
                                 textInputType: TextInputType.text,
-                                textStyle: textStyle,
-                                textFieldColor: textFieldColor,
+                                textStyle: Theme.textStyle,
+                                textFieldColor: Theme.textFieldColor,
                                 icon: Icons.person_outline,
                                 iconColor: Colors.white,
-                                bottomMargin: 20.0,
+                                bottomMargin: 25.0,
                                 validateFunction: _validations.validateName,
                                 onSaved: (String name) {
                                   newUser.displayName = name;
@@ -102,11 +113,11 @@ class SignUpScreenState extends State<SignUpScreen> {
                                   hintText: "Email",
                                   obscureText: false,
                                   textInputType: TextInputType.emailAddress,
-                                  textStyle: textStyle,
-                                  textFieldColor: textFieldColor,
+                                  textStyle: Theme.textStyle,
+                                  textFieldColor: Theme.textFieldColor,
                                   icon: Icons.mail_outline,
                                   iconColor: Colors.white,
-                                  bottomMargin: 20.0,
+                                  bottomMargin: 25.0,
                                   validateFunction: _validations.validateEmail,
                                   onSaved: (String email) {
                                     newUser.email = email;
@@ -115,11 +126,11 @@ class SignUpScreenState extends State<SignUpScreen> {
                                   hintText: "Password",
                                   obscureText: true,
                                   textInputType: TextInputType.text,
-                                  textStyle: textStyle,
-                                  textFieldColor: textFieldColor,
+                                  textStyle: Theme.textStyle,
+                                  textFieldColor: Theme.textFieldColor,
                                   icon: Icons.lock_open,
                                   iconColor: Colors.white,
-                                  bottomMargin: 40.0,
+                                  bottomMargin: 25.0,
                                   validateFunction:
                                       _validations.validatePassword,
                                   onSaved: (String password) {
@@ -137,7 +148,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                       new TextButton(
                         buttonName: "Terms & Condition",
                         onPressed: _onPressed,
-                        buttonTextStyle: buttonTextStyle,
+                        buttonTextStyle: Theme.buttonTextStyle,
                       )
                     ],
                   ),

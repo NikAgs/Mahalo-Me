@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../theme/style.dart';
-import 'style.dart';
 import '../../components/TextFields/inputField.dart';
 import '../../components/Buttons/textButton.dart';
 import '../../components/Buttons/roundedButton.dart';
 import '../../services/validations.dart';
 import '../../services/authentication.dart';
+import '../../theme/style.dart' as Theme;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key}) : super(key: key);
@@ -68,7 +68,17 @@ class LoginScreenState extends State<LoginScreen> {
             controller: scrollController,
             child: new Container(
               padding: new EdgeInsets.all(16.0),
-              decoration: new BoxDecoration(image: backgroundImage),
+              decoration: new BoxDecoration(
+                gradient: new LinearGradient(
+                    colors: [
+                      Theme.ThemeColors.lightPurple,
+                      Theme.ThemeColors.cyan
+                    ],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(1.0, 1.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp),
+              ),
               child: new Column(
                 children: <Widget>[
                   new Container(
@@ -79,11 +89,10 @@ class LoginScreenState extends State<LoginScreen> {
                       children: <Widget>[
                         new Center(
                             child: new Image(
-                          image: logo,
+                          image: new ExactAssetImage("assets/logo.png"),
                           width: (screenSize.width < 500)
-                              ? 120.0
-                              : (screenSize.width / 4) + 12.0,
-                          height: screenSize.height / 4 + 20,
+                              ? 175.0
+                              : (screenSize.width / 3),
                         ))
                       ],
                     ),
@@ -107,7 +116,7 @@ class LoginScreenState extends State<LoginScreen> {
                                   textFieldColor: textFieldColor,
                                   icon: Icons.mail_outline,
                                   iconColor: Colors.white,
-                                  bottomMargin: 20.0,
+                                  bottomMargin: 25.0,
                                   validateFunction: validations.validateEmail,
                                   onSaved: (String email) {
                                     user.email = email;
