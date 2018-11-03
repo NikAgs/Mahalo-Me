@@ -6,7 +6,7 @@ TextStyle textStyle = const TextStyle(
     fontWeight: FontWeight.normal);
 
 ThemeData appTheme = new ThemeData(
-  hintColor: Colors.white,
+  hintColor: Colors.purple,
 );
 
 Color textFieldColor = const Color.fromRGBO(255, 255, 255, 0.1);

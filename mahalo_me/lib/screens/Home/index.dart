@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "../../theme/style.dart" as Theme;
+import "send.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -28,7 +29,7 @@ class HomeScreenState extends State<HomeScreen> {
         ),
         body: TabBarView(
           children: [
-            Icon(Icons.directions_car),
+            new SendMoney(),
             Icon(Icons.directions_transit),
             Icon(Icons.directions_bike),
           ],
@@ -42,7 +43,7 @@ class HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.zero,
             children: <Widget>[
               new Container(
-                height: 125.0,
+                height: 132.0,
                 child: DrawerHeader(
                   padding: EdgeInsets.all(18.0),
                   child: new Column(
@@ -64,7 +65,7 @@ class HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               new Container(
-                  height: 40.0,
+                  height: 50.0,
                   child: new Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
