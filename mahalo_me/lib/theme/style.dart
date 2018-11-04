@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-ThemeData loginTheme = new ThemeData(
-  hintColor: Colors.white,
-);
+ThemeData loginTheme =
+    new ThemeData(hintColor: Colors.white, cursorColor: Colors.white);
 
 ThemeData homeTheme = new ThemeData(
     primaryIconTheme: new IconThemeData(color: Colors.white),

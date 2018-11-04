@@ -12,8 +12,8 @@ class _SendMoneyState extends State<SendMoney> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
           new Container(
-              width: 250.0,
-              height: 250.0,
+              width: 200.0,
+              height: 200.0,
               child: new RaisedButton(
                   onPressed: () {
                     print("trynna take a pic?");

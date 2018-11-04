@@ -1,7 +1,11 @@
 import "package:flutter/material.dart";
 import "../../theme/style.dart" as Theme;
+
 import "send.dart";
 import "receive.dart";
+import "reload.dart";
+
+import "../../global.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -19,6 +23,7 @@ class HomeScreenState extends State<HomeScreen> {
         home: new DefaultTabController(
           length: 3,
           child: Scaffold(
+            key: scaffoldKey,
             appBar: AppBar(
               backgroundColor: Theme.ThemeColors.cyan,
               bottom: TabBar(
@@ -35,15 +40,11 @@ class HomeScreenState extends State<HomeScreen> {
               children: [
                 new SendMoney(),
                 new ReceiveMoney(),
-                Icon(Icons.directions_bike),
+                new ReloadMoney("\$25"),
               ],
             ),
             drawer: Drawer(
-              // Add a ListView to the drawer. This ensures the user can scroll
-              // through the options in the Drawer if there isn't enough vertical
-              // space to fit everything.
               child: ListView(
-                // Important: Remove any padding from the ListView.
                 padding: EdgeInsets.zero,
                 children: <Widget>[
                   new Container(

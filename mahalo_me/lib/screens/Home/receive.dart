@@ -7,8 +7,8 @@ class ReceiveMoney extends StatelessWidget {
         child: new Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        new Image(image: new ExactAssetImage("assets/logo.png"), width: 175.0),   //TODO: reference a sample QR code image
-        new SizedBox(height: 45.0),
+        new Image(image: new ExactAssetImage("assets/qrcode.png"), width: 175.0),
+        new SizedBox(height: 75.0),
         Text("MahaloMe ID",
             style: new TextStyle(fontSize: 18.0, color: Colors.grey)),
         new SizedBox(height: 5.0),

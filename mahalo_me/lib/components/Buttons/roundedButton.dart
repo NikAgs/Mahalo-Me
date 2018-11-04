@@ -9,6 +9,7 @@ class RoundedButton extends StatelessWidget {
   final double bottomMargin;
   final double borderWidth;
   final Color buttonColor;
+  final double borderRadius;
 
   final TextStyle textStyle = const TextStyle(
       color: const Color(0XFFFFFFFF),
@@ -23,7 +24,8 @@ class RoundedButton extends StatelessWidget {
       this.bottomMargin,
       this.borderWidth,
       this.width,
-      this.buttonColor});
+      this.buttonColor,
+      this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,8 @@ class RoundedButton extends StatelessWidget {
           alignment: FractionalOffset.center,
           decoration: new BoxDecoration(
               color: buttonColor,
-              borderRadius: new BorderRadius.all(const Radius.circular(30.0)),
+              borderRadius:
+                  new BorderRadius.all(new Radius.circular(borderRadius)),
               border: new Border.all(
                   color: const Color.fromRGBO(221, 221, 221, 1.0),
                   width: borderWidth)),
@@ -54,7 +57,8 @@ class RoundedButton extends StatelessWidget {
           alignment: FractionalOffset.center,
           decoration: new BoxDecoration(
             color: buttonColor,
-            borderRadius: new BorderRadius.all(const Radius.circular(30.0)),
+            borderRadius:
+                new BorderRadius.all(new Radius.circular(borderRadius)),
           ),
           child: new Text(buttonName, style: textStyle),
         ),

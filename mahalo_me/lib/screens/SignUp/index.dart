@@ -100,7 +100,8 @@ class SignUpScreenState extends State<SignUpScreen> {
                                 obscureText: false,
                                 textInputType: TextInputType.text,
                                 textStyle: Theme.textStyle,
-                                textFieldColor: Colors.white,
+                                textFieldColor:
+                                    const Color.fromRGBO(255, 255, 255, 0.2),
                                 icon: Icons.person_outline,
                                 iconColor: Colors.white,
                                 bottomMargin: 25.0,
@@ -114,7 +115,8 @@ class SignUpScreenState extends State<SignUpScreen> {
                                   obscureText: false,
                                   textInputType: TextInputType.emailAddress,
                                   textStyle: Theme.textStyle,
-                                  textFieldColor: Colors.white,
+                                  textFieldColor:
+                                      const Color.fromRGBO(255, 255, 255, 0.2),
                                   icon: Icons.mail_outline,
                                   iconColor: Colors.white,
                                   bottomMargin: 25.0,
@@ -127,7 +129,8 @@ class SignUpScreenState extends State<SignUpScreen> {
                                   obscureText: true,
                                   textInputType: TextInputType.text,
                                   textStyle: Theme.textStyle,
-                                  textFieldColor: Colors.white,
+                                  textFieldColor:
+                                      const Color.fromRGBO(255, 255, 255, 0.2),
                                   icon: Icons.lock_open,
                                   iconColor: Colors.white,
                                   bottomMargin: 25.0,
@@ -137,12 +140,14 @@ class SignUpScreenState extends State<SignUpScreen> {
                                     newUser.password = password;
                                   }),
                               new RoundedButton(
-                                  buttonName: "Continue",
-                                  onTap: _handleSubmitted,
-                                  width: screenSize.width,
-                                  height: 50.0,
-                                  bottomMargin: 10.0,
-                                  borderWidth: 1.0)
+                                buttonName: "Continue",
+                                onTap: _handleSubmitted,
+                                width: screenSize.width,
+                                height: 50.0,
+                                bottomMargin: 10.0,
+                                borderWidth: 1.0,
+                                borderRadius: 30.0,
+                              )
                             ],
                           )),
                       new TextButton(
