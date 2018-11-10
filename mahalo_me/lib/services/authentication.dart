@@ -7,6 +7,7 @@ class UserData {
   String email;
   String uid;
   String password;
+  String confirmPassword;
 
   UserData({this.displayName, this.email, this.uid, this.password});
 }

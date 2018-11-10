@@ -71,10 +71,21 @@ class SignUpScreenState extends State<SignUpScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                // new SizedBox(height: 10.0),
-                // new IconButton(icon: new Icon( Icons.arrow_back, color: Colors.white), onPressed: () {Navigator.of(context).pop();},),
+                new SizedBox(height: 20.0),
+                new Container(
+                  height: 30.0,
+                  width: screenSize.width,
+                  child: new IconButton(
+                    iconSize: 28.0,
+                    alignment: Alignment.bottomLeft,
+                    icon: new Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
                 new SizedBox(
-                    height: screenSize.height / 2,
+                    height: (screenSize.height / 2) - 50.0,
                     child: new Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -97,21 +108,6 @@ class SignUpScreenState extends State<SignUpScreen> {
                           //onWillPop: _warnUserAboutInvalidData,
                           child: new Column(
                             children: <Widget>[
-                              new InputField(
-                                hintText: "Username",
-                                obscureText: false,
-                                textInputType: TextInputType.text,
-                                textStyle: Theme.textStyle,
-                                textFieldColor:
-                                    const Color.fromRGBO(255, 255, 255, 0.2),
-                                icon: Icons.person_outline,
-                                iconColor: Colors.white,
-                                bottomMargin: 25.0,
-                                validateFunction: _validations.validateName,
-                                onSaved: (String name) {
-                                  newUser.displayName = name;
-                                },
-                              ),
                               new InputField(
                                   hintText: "Email",
                                   obscureText: false,
@@ -140,6 +136,21 @@ class SignUpScreenState extends State<SignUpScreen> {
                                       _validations.validatePassword,
                                   onSaved: (String password) {
                                     newUser.password = password;
+                                  }),
+                              new InputField(
+                                  hintText: "Confirm Password",
+                                  obscureText: true,
+                                  textInputType: TextInputType.text,
+                                  textStyle: Theme.textStyle,
+                                  textFieldColor:
+                                      const Color.fromRGBO(255, 255, 255, 0.2),
+                                  icon: Icons.lock_open,
+                                  iconColor: Colors.white,
+                                  bottomMargin: 25.0,
+                                  validateFunction:
+                                      _validations.validatePassword,
+                                  onSaved: (String password) {
+                                    newUser.confirmPassword = password;
                                   }),
                               new RoundedButton(
                                 buttonName: "Continue",

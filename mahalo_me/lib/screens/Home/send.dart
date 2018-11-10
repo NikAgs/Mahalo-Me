@@ -9,8 +9,11 @@ class _SendMoneyState extends State<SendMoney> {
   Widget build(BuildContext context) {
     return new Container(
         child: new Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+          new Text("Scan a MahaloMe QR code",
+              style: new TextStyle(color: Colors.black54, fontSize: 19.0)),
+              new SizedBox(height: 50.0),
           new Container(
               width: 200.0,
               height: 200.0,
@@ -28,6 +31,7 @@ class _SendMoneyState extends State<SendMoney> {
                       color: Colors.grey,
                     ),
                   ))),
+                  new SizedBox(height: 70.0),
           new Container(
             width: 300.0,
             child: new TextFormField(
