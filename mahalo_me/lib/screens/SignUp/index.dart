@@ -71,6 +71,8 @@ class SignUpScreenState extends State<SignUpScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                // new SizedBox(height: 10.0),
+                // new IconButton(icon: new Icon( Icons.arrow_back, color: Colors.white), onPressed: () {Navigator.of(context).pop();},),
                 new SizedBox(
                     height: screenSize.height / 2,
                     child: new Column(
