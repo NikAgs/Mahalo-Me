@@ -6,6 +6,7 @@ import "receive.dart";
 import "reload.dart";
 
 import "../../global.dart";
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -55,12 +56,12 @@ class HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('John Appleseed',
+                          Text('MahaloMe User',
                               style: new TextStyle(
                                   color: Colors.white,
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.bold)),
-                          Text('johnappleseed@gmail.com',
+                          Text(email,
                               style: new TextStyle(color: Colors.white))
                         ],
                       ),
@@ -107,6 +108,7 @@ class HomeScreenState extends State<HomeScreen> {
                     leading: Icon(Icons.lock),
                     title: Text('Logout'),
                     onTap: () {
+                      FirebaseAuth.instance.signOut();
                       Navigator.pop(context);
                     },
                   ),

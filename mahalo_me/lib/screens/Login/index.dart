@@ -50,7 +50,7 @@ class LoginScreenState extends State<LoginScreen> {
           Navigator.pushNamed(context, "/HomePage");
         else
           showInSnackBar(onValue);
-      }).catchError((PlatformException onError) {
+      }).catchError((onError) {
         showInSnackBar(onError.message);
       });
     }
@@ -91,7 +91,7 @@ class LoginScreenState extends State<LoginScreen> {
                             child: new Image(
                           image: new ExactAssetImage("assets/logo.png"),
                           width: (screenSize.width < 500)
-                              ? 175.0
+                              ? 220.0
                               : (screenSize.width / 3),
                         ))
                       ],

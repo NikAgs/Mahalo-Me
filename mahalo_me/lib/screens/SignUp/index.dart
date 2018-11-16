@@ -40,7 +40,7 @@ class SignUpScreenState extends State<SignUpScreen> {
       form.save();
       userAuth.createUser(newUser).then((onValue) {
         showInSnackBar(onValue);
-      }).catchError((PlatformException onError) {
+      }).catchError((onError) {
         showInSnackBar(onError.message);
       });
     }
