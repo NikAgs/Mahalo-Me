@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
-import 'package:simple_permissions/simple_permissions.dart';
 
 class SendMoney extends StatefulWidget {
   _SendMoneyState createState() => _SendMoneyState();
@@ -8,33 +7,7 @@ class SendMoney extends StatefulWidget {
 
 class _SendMoneyState extends State<SendMoney> {
 
-  String _platformVersion = 'Unknown';
   String barcode = "";
-
-  @override
-  initState() {
-    super.initState();
-    initPlatformState();
-  }
-
-   initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await SimplePermissions.platformVersion;
-    } catch(e) {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,18 +52,7 @@ class _SendMoneyState extends State<SendMoney> {
         ]));
   }
 
-  
   Future scan() async {
-    Permission cameraPermission = Permission.Camera;
-
-    bool res = await SimplePermissions.checkPermission(cameraPermission);
-    print("permission is " + res.toString());
-
-    if (!res) {
-      final res = await SimplePermissions.requestPermission(cameraPermission);
-      print("permission request result is " + res.toString());
-    }
-
     try {
       String barcode = await BarcodeScanner.scan();
       setState(() => this.barcode = barcode);
