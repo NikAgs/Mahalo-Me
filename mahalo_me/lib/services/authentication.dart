@@ -22,10 +22,10 @@ class UserAuth {
 
     try {
       await user.sendEmailVerification();
-    } catch(e) {
+    } catch (e) {
       print(e);
     }
-    
+
     return "Email verification sent to: " + userData.email;
   }
 
@@ -37,7 +37,7 @@ class UserAuth {
         email: userData.email, password: userData.password);
 
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    
+
     if (!user.isEmailVerified) {
       return "Please verify your email to login";
     }

@@ -22,7 +22,6 @@ dependencies:
   cupertino_icons: ^0.1.2
   barcode_scan: ^0.0.7
   qr_flutter: ^1.1.5
-  simple_permissions: ^0.1.9
 
 dev_dependencies:
   flutter_test:

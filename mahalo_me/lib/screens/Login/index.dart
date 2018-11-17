@@ -89,16 +89,17 @@ class LoginScreenState extends State<LoginScreen> {
                       children: <Widget>[
                         new Center(
                             child: new Image(
-                          image: new ExactAssetImage("assets/logo.png"),
-                          width: (screenSize.width < 500)
-                              ? 220.0
-                              : (screenSize.width / 3),
-                        ))
+                                image: new ExactAssetImage("assets/logo.png"),
+                                height: (screenSize.height < 500)
+                                    ? screenSize.height / 3
+                                    : 250.0))
                       ],
                     ),
                   ),
                   new Container(
-                    height: screenSize.height / 2,
+                    height: screenSize.height < 500
+                        ? screenSize.height / (1.5)
+                        : screenSize.height / 2,
                     child: new Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -111,9 +112,10 @@ class LoginScreenState extends State<LoginScreen> {
                               new InputField(
                                   hintText: "Email",
                                   obscureText: false,
-                                  textInputType: TextInputType.text,
+                                  textInputType: TextInputType.emailAddress,
                                   textStyle: textStyle,
-                                  textFieldColor: const Color.fromRGBO(255, 255, 255, 0.2),
+                                  textFieldColor:
+                                      const Color.fromRGBO(255, 255, 255, 0.2),
                                   icon: Icons.mail_outline,
                                   iconColor: Colors.white,
                                   bottomMargin: 25.0,
@@ -126,7 +128,8 @@ class LoginScreenState extends State<LoginScreen> {
                                   obscureText: true,
                                   textInputType: TextInputType.text,
                                   textStyle: textStyle,
-                                  textFieldColor: const Color.fromRGBO(255, 255, 255, 0.2),
+                                  textFieldColor:
+                                      const Color.fromRGBO(255, 255, 255, 0.2),
                                   icon: Icons.lock_open,
                                   iconColor: Colors.white,
                                   bottomMargin: 30.0,
@@ -136,15 +139,14 @@ class LoginScreenState extends State<LoginScreen> {
                                     user.password = password;
                                   }),
                               new RoundedButton(
-                                buttonName: "Get Started",
-                                onTap: _handleSubmitted,
-                                width: screenSize.width,
-                                height: 50.0,
-                                bottomMargin: 10.0,
-                                borderWidth: 0.0,
-                                buttonColor: Theme.ThemeColors.purple,
-                                borderRadius: 30.0
-                              ),
+                                  buttonName: "Get Started",
+                                  onTap: _handleSubmitted,
+                                  width: screenSize.width,
+                                  height: 50.0,
+                                  bottomMargin: 10.0,
+                                  borderWidth: 0.0,
+                                  buttonColor: Theme.ThemeColors.purple,
+                                  borderRadius: 30.0),
                             ],
                           ),
                         ),

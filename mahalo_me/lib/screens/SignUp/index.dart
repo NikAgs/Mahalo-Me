@@ -99,7 +99,9 @@ class SignUpScreenState extends State<SignUpScreen> {
                       ],
                     )),
                 new SizedBox(
-                  height: screenSize.height / 2,
+                  height: screenSize.height < 500
+                      ? screenSize.height / (1.2)
+                      : screenSize.height / 2,
                   child: new Column(
                     children: <Widget>[
                       new Form(

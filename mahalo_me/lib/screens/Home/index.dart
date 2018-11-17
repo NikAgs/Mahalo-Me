@@ -61,8 +61,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   color: Colors.white,
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.bold)),
-                          Text(email,
-                              style: new TextStyle(color: Colors.white))
+                          Text(email, style: new TextStyle(color: Colors.white))
                         ],
                       ),
                       decoration: BoxDecoration(
