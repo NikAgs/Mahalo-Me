@@ -108,7 +108,7 @@ class HomeScreenState extends State<HomeScreen> {
                     title: Text('Logout'),
                     onTap: () {
                       FirebaseAuth.instance.signOut();
-                      Navigator.pop(context);
+                      Navigator.pushNamedAndRemoveUntil(context, "/Login", (route) => false);
                     },
                   ),
                 ],

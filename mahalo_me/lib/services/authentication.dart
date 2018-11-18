@@ -3,13 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../global.dart';
 
 class UserData {
-  String displayName;
   String email;
   String uid;
   String password;
   String confirmPassword;
 
-  UserData({this.displayName, this.email, this.uid, this.password});
+  UserData({this.email, this.uid, this.password});
+
+  void clearData() {
+    this.email = "";
+    this.password = "";
+    this.confirmPassword = "";
+  }
 }
 
 class UserAuth {

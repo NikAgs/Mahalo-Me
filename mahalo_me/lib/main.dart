@@ -7,7 +7,8 @@ import 'theme/style.dart';
 void main() {
   var routes = <String, WidgetBuilder>{
     "/SignUp": (BuildContext context) => new SignUpScreen(),
-    "/HomePage": (BuildContext context) => new HomeScreen()
+    "/HomePage": (BuildContext context) => new HomeScreen(),
+    "/Login": (BuildContext context) => new LoginScreen()
   };
 
   runApp(new MaterialApp(
