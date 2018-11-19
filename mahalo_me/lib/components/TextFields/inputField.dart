@@ -11,6 +11,7 @@ class InputField extends StatelessWidget {
   var validateFunction;
   var onSaved;
   Key key;
+  TextEditingController controller;
 
   //passing props in the Constructor.
   InputField(
@@ -25,7 +26,8 @@ class InputField extends StatelessWidget {
       this.textStyle,
       this.validateFunction,
       this.onSaved,
-      this.hintStyle});
+      this.hintStyle,
+      this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,7 @@ class InputField extends StatelessWidget {
             child: new Container(
               height: 45.0,
               child: new TextFormField(
+                controller: controller,
                 style: textStyle,
                 key: key,
                 obscureText: obscureText,

@@ -17,10 +17,18 @@ class SignUpScreen extends StatefulWidget {
 class SignUpScreenState extends State<SignUpScreen> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final myController = TextEditingController();
+
   UserData newUser = new UserData();
   UserAuth userAuth = new UserAuth();
   bool _autovalidate = false;
   Validations _validations = new Validations();
+
+  @override
+  void dispose() {
+    myController.dispose();
+    super.dispose();
+  }
 
   _onPressed() {
     print("button clicked");
@@ -29,6 +37,12 @@ class SignUpScreenState extends State<SignUpScreen> {
   void showInSnackBar(String value) {
     _scaffoldKey.currentState
         .showSnackBar(new SnackBar(content: new Text(value)));
+  }
+
+  String confirmPassword(String value) {
+    if (value.isEmpty) return 'Please confirm your password.';
+    if (value != myController.text) return 'Your passwords do not match.';
+    return null;
   }
 
   void _handleSubmitted() {
@@ -125,6 +139,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                                     newUser.email = email;
                                   }),
                               new InputField(
+                                  controller: myController,
                                   hintText: "Password",
                                   obscureText: true,
                                   textInputType: TextInputType.text,
@@ -149,8 +164,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                                   icon: Icons.lock_open,
                                   iconColor: Colors.white,
                                   bottomMargin: 25.0,
-                                  validateFunction:
-                                      _validations.validatePassword,
+                                  validateFunction: confirmPassword,
                                   onSaved: (String password) {
                                     newUser.confirmPassword = password;
                                   }),

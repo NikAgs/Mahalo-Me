@@ -31,7 +31,11 @@ class ReceiveMoney extends StatelessWidget {
                 Text("MahaloMe ID",
                     style: new TextStyle(fontSize: 18.0, color: Colors.grey)),
                 new SizedBox(height: 5.0),
-                Text(firebaseUser.email, style: new TextStyle(fontSize: 18.0))
+                Text(
+                    firebaseUser.displayName == null
+                        ? ""
+                        : firebaseUser.displayName,
+                    style: new TextStyle(fontSize: 18.0))
               ],
             ))));
   }

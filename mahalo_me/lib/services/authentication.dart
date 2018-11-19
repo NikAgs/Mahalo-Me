@@ -9,12 +9,6 @@ class UserData {
   String confirmPassword;
 
   UserData({this.email, this.uid, this.password});
-
-  void clearData() {
-    this.email = "";
-    this.password = "";
-    this.confirmPassword = "";
-  }
 }
 
 class UserAuth {
