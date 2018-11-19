@@ -14,7 +14,6 @@ admin.initializeApp();
 
 var db = admin.firestore();
 
-
 exports.generateMahaloMeID = functions.auth.user().onCreate((user) => {
 
   var id = randomId(6, 'A0');
