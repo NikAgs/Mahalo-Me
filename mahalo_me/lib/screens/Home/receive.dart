@@ -19,7 +19,9 @@ class ReceiveMoney extends StatelessWidget {
                 new Center(
                   child: RepaintBoundary(
                     child: QrImage(
-                      data: firebaseUser.email,
+                      data: firebaseUser.displayName == null
+                          ? ""
+                          : firebaseUser.displayName,
                       size: 200.0,
                       onError: (ex) {
                         print("[QR] ERROR - $ex");
