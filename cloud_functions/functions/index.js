@@ -25,7 +25,7 @@ exports.generateMahaloMeID = functions.auth.user().onCreate((user) => {
       })
       .catch((err) => {
         if (err) {
-          console.log("uhoh there was a problem generating a random ID");
+          console.log("Uhoh there was a problem generating a random ID");
         }
       });
   };
@@ -104,10 +104,10 @@ exports.addPaymentSource = functions.firestore.document('/users/{userId}/tokens/
 
 // When a user deletes their account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
-  const snapshot = await admin.database().ref(`/users/${user.uid}`).once('value');
+  const snapshot = await admin.database().ref(`/users/${user.displayName}`).once('value');
   const customer = snapshot.data();
   await stripe.customers.del(customer.customer_id);
-  return admin.firestore().collection('users').doc(user.uid).delete();
+  return admin.firestore().collection('users').doc(user.displayName).delete();
 });
 
 
