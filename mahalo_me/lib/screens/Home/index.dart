@@ -7,6 +7,7 @@ import "reload.dart";
 
 import "../../global.dart";
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:stripe_payment/stripe_payment.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -93,7 +94,10 @@ class HomeScreenState extends State<HomeScreen> {
                     leading: Icon(Icons.settings),
                     title: Text('Settings'),
                     onTap: () {
-                      print("Ooh, no settings yet");
+                      StripeSource.setPublishableKey("pk_live_PtasgnsC5reW9HYygmXU4qlL");
+                      StripeSource.addSource().then((String token) {
+                        print("Ayyo got this token");
+                      });
                     },
                   ),
                   ListTile(
@@ -108,7 +112,8 @@ class HomeScreenState extends State<HomeScreen> {
                     title: Text('Logout'),
                     onTap: () {
                       FirebaseAuth.instance.signOut();
-                      Navigator.pushNamedAndRemoveUntil(context, "/Login", (route) => false);
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, "/Login", (route) => false);
                     },
                   ),
                 ],
