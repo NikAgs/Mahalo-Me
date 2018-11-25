@@ -22,23 +22,30 @@ exports.generateMahaloMeID = functions.auth.user().onCreate((user) => {
         } else {
           return id;
         }
+      })
+      .catch((err) => {
+        if (err) {
+          console.log("uhoh there was a problem generating a random ID");
+        }
       });
   };
 
   // Generate MahaloMe ID
   var id = generateID(randomId(6, 'A0'));
 
-  db.collection('users').doc(id).docRef.set({
+  await(db.collection('users').doc(id).docRef.set({
     email: user.email
-  });
+  }));
 
-  await admin.auth().updateUser(user.uid, {
+  await(admin.auth().updateUser(user.uid, {
     displayName: id
-  });
+  }));
 
   // Create Stripe User
-  var customer = await stripe.customers.create({ email: user.email });
-  await admin.firestore().collection('users').doc(id).set({ customer_id: customer.id });
+  var customer = await(stripe.customers.create({ email: user.email }));
+  await(db.collection('users').doc(id).set({
+    customer_id: customer.id
+  }));
 
   console.log('Created user with user id: ' + id);
 
