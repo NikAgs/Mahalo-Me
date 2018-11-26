@@ -62,9 +62,7 @@ class SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     Size screenSize = MediaQuery.of(context).size;
-    //print(context.widget.toString());
     return new Scaffold(
         key: _scaffoldKey,
         body: new SingleChildScrollView(

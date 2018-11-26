@@ -4,8 +4,8 @@ ThemeData loginTheme =
     new ThemeData(hintColor: Colors.white, cursorColor: Colors.white);
 
 ThemeData homeTheme = new ThemeData(
-  cursorColor: ThemeColors.cyan,
-  textSelectionColor: Colors.white,
+    cursorColor: ThemeColors.cyan,
+    textSelectionColor: Colors.white,
     primaryIconTheme: new IconThemeData(color: Colors.white),
     primaryTextTheme: new TextTheme(
         title: new TextStyle(color: Colors.white),

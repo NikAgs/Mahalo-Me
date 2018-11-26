@@ -11,7 +11,7 @@ admin.initializeApp();
 
 var db = admin.firestore();
 
-exports.generateMahaloMeID = functions.auth.user().onCreate((user) => {
+exports.generateMahaloMeID = functions.auth.user().onCreate(async (user) => {
 
   let generateID = function (id) {
     var docRef = db.collection('users').doc(id);

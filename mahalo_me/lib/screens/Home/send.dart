@@ -48,7 +48,7 @@ class _SendMoneyState extends State<SendMoney> {
                         icon: Icon(Icons.input),
                         labelText: 'MahaloMe Code',
                       ),
-                      keyboardType: TextInputType.emailAddress,
+                      keyboardType: TextInputType.text,
                       onSaved: (String value) {},
                       validator: (input) {
                         return input;

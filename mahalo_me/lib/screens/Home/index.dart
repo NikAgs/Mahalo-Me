@@ -7,7 +7,6 @@ import "reload.dart";
 
 import "../../global.dart";
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:stripe_payment/stripe_payment.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -94,10 +93,7 @@ class HomeScreenState extends State<HomeScreen> {
                     leading: Icon(Icons.settings),
                     title: Text('Settings'),
                     onTap: () {
-                      StripeSource.setPublishableKey("pk_live_PtasgnsC5reW9HYygmXU4qlL");
-                      StripeSource.addSource().then((String token) {
-                        print("Ayyo got this token");
-                      });
+                      Navigator.pushNamed(context, "/PaymentMethods");
                     },
                   ),
                   ListTile(
