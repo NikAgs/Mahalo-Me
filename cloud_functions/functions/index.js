@@ -13,39 +13,43 @@ var db = admin.firestore();
 
 exports.generateMahaloMeID = functions.auth.user().onCreate(async (user) => {
 
-  let generateID = function (id) {
-    var docRef = db.collection('users').doc(id);
-    docRef.get()
-      .then((docSnapshot) => {
-        if (docSnapshot.exists) {
-          return generateID(randomId(6, 'A0'));
-        } else {
-          return id;
-        }
-      })
-      .catch((err) => {
-        if (err) {
-          console.log("Uhoh there was a problem generating a random ID");
-        }
-      });
-  };
+  var len = 6;
+  var pattern = 'A0';
+  // let generateID = function (id) {
+  //   var docRef = db.collection('users').doc(id);
+  //   docRef.get()
+  //     .then((docSnapshot) => {
+  //       if (docSnapshot.exists) {
+  //         return generateID(randomId(len, pattern));
+  //       } else {
+  //         return id;
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       if (err) {
+  //         console.log("Uhoh there was a problem generating a random ID");
+  //       }
+  //     });
+  // };
+
 
   // Generate MahaloMe ID
-  var id = generateID(randomId(6, 'A0'));
+  var id = randomId(len, pattern);
+  console.log("ID generated: " + id);
 
-  await(db.collection('users').doc(id).docRef.set({
-    email: user.email
+  await (db.collection('users').doc(id).set({
+    email: user.email.toString()
   }));
 
-  await(admin.auth().updateUser(user.uid, {
+  await (admin.auth().updateUser(user.uid, {
     displayName: id
   }));
 
   // Create Stripe User
-  var customer = await(stripe.customers.create({ email: user.email }));
-  await(db.collection('users').doc(id).set({
+  var customer = await (stripe.customers.create({ email: user.email }));
+  await (db.collection('users').doc(id).set({
     customer_id: customer.id
-  }));
+  }, { merge: true }));
 
   console.log('Created user with user id: ' + id);
 
@@ -105,7 +109,7 @@ exports.addPaymentSource = functions.firestore.document('/users/{userId}/tokens/
 // When a user deletes their account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
   const snapshot = await admin.database().ref(`/users/${user.displayName}`).once('value');
-  const customer = snapshot.data();
+  const customer = snapshot.val();
   await stripe.customers.del(customer.customer_id);
   return admin.firestore().collection('users').doc(user.displayName).delete();
 });

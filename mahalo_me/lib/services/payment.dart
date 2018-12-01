@@ -1,4 +1,7 @@
 import 'package:stripe_api/stripe_api.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../global.dart';
 
 Future<void> addCreditCard(
     String number, String expDate, String cvv, String postalCode) async {
@@ -11,7 +14,11 @@ Future<void> addCreditCard(
       new StripeCard(number: number, cvc: cvv, expMonth: month, expYear: year);
 
   Stripe.instance.createCardToken(card).then((c) {
-    print(c.id);
+    Firestore.instance
+        .collection('users')
+        .document(firebaseUser.displayName)
+        .collection('tokens')
+        .add({'token': c.id});
   }).catchError((error) {
     print(error);
   });
