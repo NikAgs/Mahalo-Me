@@ -98,13 +98,30 @@ exports.addPaymentSource = functions.firestore.document('/users/{userId}/tokens/
     const snapshot = await admin.firestore().collection('users').doc(context.params.userId).get();
     const customer = snapshot.data().customer_id;
     const response = await stripe.customers.createSource(customer, { source: token });
-    return admin.firestore().collection('users').doc(context.params.userId).collection("sources").doc(response.fingerprint).set(response, { merge: true });
+    return admin.firestore().collection('users').doc(context.params.userId).collection("sources").doc(response.id).set(response, { merge: true });
   } catch (error) {
     await snap.ref.set({ 'error': userFacingMessage(error) }, { merge: true });
     return reportError(error, { user: context.params.userId });
   }
 });
 
+// Delete a payment source (card) for a user
+exports.deletePaymentSource = functions.firestore.document('/users/{userId}/deleted/{pushId}').onCreate(async (snap, context) => {
+  const customerId = snap.data().customerId;
+  const sourceId = snap.data().sourceId;
+
+  admin.firestore().collection('users').doc(context.params.userId).collection('deleted').doc(context.params.pushId).delete();
+  admin.firestore().collection('users').doc(context.params.userId).collection('sources').doc(sourceId).delete();
+
+  stripe.customers.deleteSource(
+    customerId,
+    sourceId,
+    (err, source) => {
+      if (err) console.log('There was a problem deleting the credit card');
+      return console.log('Deleted source: ' + source.id);
+    }
+  );
+});
 
 // When a user deletes their account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {

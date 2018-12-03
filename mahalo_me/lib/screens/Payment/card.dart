@@ -186,10 +186,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                                                       _cardData.expDate,
                                                       _cardData.cvv,
                                                       _cardData.postalCode);
-                                                  _scaffoldKey.currentState
-                                                      .showSnackBar(SnackBar(
-                                                          content: Text(
-                                                              'Added Credit Card')));
+                                                  Navigator.of(context).pop();
                                                 }
                                               },
                                             )

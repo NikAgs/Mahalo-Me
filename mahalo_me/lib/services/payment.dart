@@ -23,3 +23,11 @@ Future<void> addCreditCard(
     print(error);
   });
 }
+
+Future<void> deleteCreditCard(customerId, sourceId) async {
+  Firestore.instance
+      .collection('users')
+      .document(firebaseUser.displayName)
+      .collection('deleted')
+      .add({"sourceId": sourceId, "customerId": customerId});
+}
