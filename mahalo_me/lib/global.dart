@@ -6,3 +6,5 @@ final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 FirebaseUser firebaseUser;
 
 String email;
+
+bool paymentProcessing = false;

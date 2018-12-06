@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 
 import "../../global.dart";
+import "../../services/payment.dart";
 
 import "../../theme/style.dart" as Theme;
 
@@ -98,8 +99,10 @@ class _ReloadMoneyState extends State<ReloadMoney> {
                                           }),
                                       FlatButton(
                                           child: const Text("Yes"),
-                                          onPressed: () {
+                                          onPressed: () async {
                                             Navigator.pop(context);
+                                            // Charge the card here
+                                            await chargeCard(_value.substring(1) + "00");
                                             scaffoldKey.currentState
                                                 .showSnackBar(new SnackBar(
                                                     content: new Text(

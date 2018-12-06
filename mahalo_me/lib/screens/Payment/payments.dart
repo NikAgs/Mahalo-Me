@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../theme/style.dart' as Theme;
 import '../../global.dart';
 import '../../services/payment.dart';
+import '../loading.dart';
 
 class PaymentMethodsScreen extends StatefulWidget {
   _PaymentMethodsScreenState createState() => _PaymentMethodsScreenState();
@@ -13,6 +14,22 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   var cards; // maintains the number of credit cards the user has
   var tokens; // maintains the number of tokens the user has
+
+  void loadWheel() {
+    if (this.mounted) {
+      setState(() {
+        paymentProcessing = true;
+      });
+    }
+  }
+
+  void killWheel() {
+    if (this.mounted) {
+      setState(() {
+        paymentProcessing = false;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -27,11 +44,9 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
         .listen((snap) {
       if (cards != null) {
         if (snap.documents.length > cards) {
-          _scaffoldKey.currentState.showSnackBar(
-              new SnackBar(content: new Text("Added card successfully")));
+          killWheel();
         } else if (snap.documents.length < cards) {
-          _scaffoldKey.currentState.showSnackBar(
-              new SnackBar(content: new Text("Removed card successfully")));
+          killWheel();
         }
       }
       cards = snap.documents.length;
@@ -47,6 +62,9 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
       if (tokens != null) {
         snap.documentChanges.forEach((doc) {
           if (doc.document.data.containsKey("error")) {
+            setState(() {
+              paymentProcessing = false;
+            });
             _scaffoldKey.currentState.showSnackBar(new SnackBar(
                 content: new Text("There was a problem with your card")));
           }
@@ -80,24 +98,32 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
             },
           ),
         ),
-        body: new StreamBuilder(
-            stream: Firestore.instance
-                .collection('users')
-                .document(firebaseUser.displayName)
-                .collection('sources')
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return new Text('');
-              }
-              return new ListView.builder(
-                  itemCount: snapshot.data.documents.length,
-                  itemBuilder: (context, index) {
-                    DocumentSnapshot ds = snapshot.data.documents[index];
-                    return new CardListItem(ds.data['last4'],
-                        ds.data["customer"], ds.data["id"], _scaffoldKey);
-                  });
-            }));
+        body: paymentProcessing
+            ? new ColorLoader(
+                colors: [Theme.ThemeColors.cyan, Theme.ThemeColors.purple],
+                duration: new Duration(milliseconds: 1200))
+            : new StreamBuilder(
+                stream: Firestore.instance
+                    .collection('users')
+                    .document(firebaseUser.displayName)
+                    .collection('sources')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return new Text('');
+                  }
+                  return new ListView.builder(
+                      itemCount: snapshot.data.documents.length,
+                      itemBuilder: (context, index) {
+                        DocumentSnapshot ds = snapshot.data.documents[index];
+                        return new CardListItem(
+                            ds.data['last4'],
+                            ds.data["customer"],
+                            ds.data["id"],
+                            _scaffoldKey,
+                            loadWheel);
+                      });
+                }));
   }
 }
 
@@ -106,8 +132,10 @@ class CardListItem extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey;
   final String _customer;
   final String _id;
+  final VoidCallback _load;
 
-  CardListItem(this._last4, this._customer, this._id, this._scaffoldKey);
+  CardListItem(
+      this._last4, this._customer, this._id, this._scaffoldKey, this._load);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -138,6 +166,7 @@ class CardListItem extends StatelessWidget {
                                   FlatButton(
                                       child: const Text('Yes'),
                                       onPressed: () {
+                                        _load();
                                         Navigator.pop(context);
                                         deleteCreditCard(_customer, _id);
                                       })

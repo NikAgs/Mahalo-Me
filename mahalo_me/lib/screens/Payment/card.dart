@@ -6,6 +6,8 @@ import '../../services/payment.dart';
 
 import '../../theme/style.dart' as Theme;
 
+import '../../global.dart';
+
 class _CardData {
   String number = '';
   String expDate = '';
@@ -186,6 +188,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                                                       _cardData.expDate,
                                                       _cardData.cvv,
                                                       _cardData.postalCode);
+                                                  paymentProcessing = true;
                                                   Navigator.of(context).pop();
                                                 }
                                               },
