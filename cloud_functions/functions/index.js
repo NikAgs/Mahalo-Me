@@ -41,6 +41,10 @@ exports.generateMahaloMeID = functions.auth.user().onCreate(async (user) => {
     email: user.email.toString()
   }));
 
+  await (db.collection('users').doc(id).set({
+    uid: user.uid.toString()
+  }, { merge: true }));
+
   await (admin.auth().updateUser(user.uid, {
     displayName: id
   }));
@@ -125,10 +129,11 @@ exports.deletePaymentSource = functions.firestore.document('/users/{userId}/dele
 
 // When a user deletes their account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
-  const snapshot = await admin.database().ref(`/users/${user.displayName}`).once('value');
-  const customer = snapshot.val();
-  await stripe.customers.del(customer.customer_id);
-  return admin.firestore().collection('users').doc(user.displayName).delete();
+  await admin.firestore().collection('users').doc(user.displayName).delete();
+  const snapshot = await admin.database().ref('/users/' + user.displayName).once('value');
+  const customerId = snapshot.val().customer_id;
+  console.log('Deleting Stripe user: ' + customerId);
+  return stripe.customers.del(customerId);
 });
 
 
