@@ -15,6 +15,10 @@ exports.generateMahaloMeID = functions.auth.user().onCreate(async (user) => {
 
   var len = 6;
   var pattern = 'A0';
+
+  // Couldn't figure out how to make this work. We want to check if the randomly
+  // generated ID already matches up with a user before using it
+
   // let generateID = function (id) {
   //   var docRef = db.collection('users').doc(id);
   //   docRef.get()
@@ -38,15 +42,18 @@ exports.generateMahaloMeID = functions.auth.user().onCreate(async (user) => {
   console.log("ID generated: " + id);
 
   await (db.collection('users').doc(id).set({
-    email: user.email.toString()
-  }));
-
-  await (db.collection('users').doc(id).set({
+    email: user.email.toString(),
     uid: user.uid.toString()
-  }, { merge: true }));
+  }));
 
   await (admin.auth().updateUser(user.uid, {
     displayName: id
+  }));
+
+  // the user starts with no money
+  await (db.collection('balances').doc(id).set({
+    balance: 0,
+    uid: user.uid.toString()
   }));
 
   // Create Stripe User
@@ -78,6 +85,14 @@ exports.createStripeCharge = functions.firestore.document('users/{userId}/charge
       charge.source = val.source;
     }
     const response = await stripe.charges.create(charge, { idempotency_key: idempotencyKey });
+
+    var balance = (await db.collection('balances').doc(context.params.userId).get()).data().balance;
+
+    await (db.collection('balances').doc(context.params.userId).set({
+      balance: balance + (amount / 100)
+    }, { merge: true }));
+
+    console.log("Changed user: " + context.params.userId + " balance to " + balance + (amount / 100));
     // If the result is successful, write it back to the database
     return snap.ref.set(response, { merge: true });
   } catch (error) {

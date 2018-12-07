@@ -8,3 +8,4 @@ FirebaseUser firebaseUser;
 String email;
 
 bool paymentProcessing = false;
+bool chargeProcessing = false;

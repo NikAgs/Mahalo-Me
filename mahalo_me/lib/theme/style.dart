@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/loading.dart';
 
 ThemeData loginTheme =
     new ThemeData(hintColor: Colors.white, cursorColor: Colors.white);
@@ -49,3 +50,7 @@ class ThemeColors {
     end: Alignment.bottomCenter,
   );
 }
+
+ColorLoader loader = new ColorLoader(
+    colors: [ThemeColors.cyan, ThemeColors.purple],
+    duration: new Duration(milliseconds: 1200));

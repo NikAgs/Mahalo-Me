@@ -7,6 +7,7 @@ import "reload.dart";
 
 import "../../global.dart";
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -16,6 +17,26 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
+  String _balance = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Dialogue for charging card unsuccessfully
+    Firestore.instance
+        .collection('balances')
+        .document(firebaseUser.displayName)
+        .snapshots()
+        .listen((snap) {
+      if (this.mounted) {
+        setState(() {
+          _balance = '\$' + snap.data["balance"].toString() + '.00';
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -75,7 +96,7 @@ class HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           new Text(
-                            "\$50.00",
+                            _balance,
                             style: new TextStyle(
                                 fontSize: 15.0, color: new Color(0xFF4d4d4d)),
                           ),

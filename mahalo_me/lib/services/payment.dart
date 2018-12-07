@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:stripe_api/stripe_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -32,7 +33,7 @@ Future<void> deleteCreditCard(customerId, sourceId) async {
       .add({"sourceId": sourceId, "customerId": customerId});
 }
 
-Future<void> chargeCard(amount) async {
+Future<void> chargeCard(amount, killWheel) async {
   try {
     var source = (await Firestore.instance
             .collection('users')
@@ -48,6 +49,8 @@ Future<void> chargeCard(amount) async {
         .collection('charges')
         .add({"amount": amount, "source": source});
   } catch (e) {
-    print("There was a problem with charging the user");
+    killWheel();
+    scaffoldKey.currentState.showSnackBar(new SnackBar(
+        content: new Text("There was a problem proccessing the charge")));
   }
 }

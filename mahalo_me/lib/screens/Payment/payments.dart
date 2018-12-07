@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../../theme/style.dart' as Theme;
 import '../../global.dart';
 import '../../services/payment.dart';
-import '../loading.dart';
 
 class PaymentMethodsScreen extends StatefulWidget {
   _PaymentMethodsScreenState createState() => _PaymentMethodsScreenState();
@@ -12,8 +11,8 @@ class PaymentMethodsScreen extends StatefulWidget {
 
 class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  var cards; // maintains the number of credit cards the user has
-  var tokens; // maintains the number of tokens the user has
+  var _cards; // maintains the number of credit cards the user has
+  var _tokens; // maintains the number of tokens the user has
 
   void loadWheel() {
     if (this.mounted) {
@@ -42,14 +41,14 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
         .collection('sources')
         .snapshots()
         .listen((snap) {
-      if (cards != null) {
-        if (snap.documents.length > cards) {
+      if (_cards != null) {
+        if (snap.documents.length > _cards) {
           killWheel();
-        } else if (snap.documents.length < cards) {
+        } else if (snap.documents.length < _cards) {
           killWheel();
         }
       }
-      cards = snap.documents.length;
+      _cards = snap.documents.length;
     });
 
     // Dialogue for adding card unsuccessfully
@@ -59,7 +58,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
         .collection('tokens')
         .snapshots()
         .listen((snap) {
-      if (tokens != null) {
+      if (_tokens != null) {
         snap.documentChanges.forEach((doc) {
           if (doc.document.data.containsKey("error")) {
             setState(() {
@@ -70,7 +69,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           }
         });
       }
-      tokens = snap.documents.length;
+      _tokens = snap.documents.length;
     });
   }
 
@@ -99,9 +98,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           ),
         ),
         body: paymentProcessing
-            ? new ColorLoader(
-                colors: [Theme.ThemeColors.cyan, Theme.ThemeColors.purple],
-                duration: new Duration(milliseconds: 1200))
+            ? Theme.loader
             : new StreamBuilder(
                 stream: Firestore.instance
                     .collection('users')
