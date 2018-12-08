@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:barcode_scan/barcode_scan.dart';
 import '../../services/validations.dart';
@@ -17,6 +18,58 @@ class _SendMoneyState extends State<SendMoney> {
   final _formKey = GlobalKey<FormState>();
   Validations validations = new Validations();
   final myController = TextEditingController();
+  var _transfers;
+
+  void loadWheel() {
+    if (this.mounted) {
+      setState(() {
+        sendingMoney = true;
+      });
+    }
+  }
+
+  void killWheel() {
+    if (this.mounted) {
+      setState(() {
+        sendingMoney = false;
+      });
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+
+    // Listener for status of transfer
+    Firestore.instance
+        .collection('users')
+        .document(firebaseUser.displayName)
+        .collection('sent')
+        .snapshots()
+        .listen((snap) {
+      if (_transfers != null) {
+        snap.documentChanges.forEach((doc) {
+          var data = doc.document.data;
+          if (data.length == 2)
+            return; // this catches the transfer initially created by the client
+          killWheel();
+          if (data.containsKey("error")) {
+            scaffoldKey.currentState
+                .showSnackBar(new SnackBar(content: new Text(data['error'])));
+          } else {
+            scaffoldKey.currentState.showSnackBar(new SnackBar(
+                content: new Text('Successfully sent ' +
+                    '\$' +
+                    data['amount'].toString() +
+                    ' to user: ' +
+                    data['receiver'])));
+          }
+        });
+      }
+      _transfers = snap.documents.length;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -41,8 +94,10 @@ class _SendMoneyState extends State<SendMoney> {
                         child: const Text("SUBMIT"),
                         onPressed: () async {
                           Navigator.pop(context);
-                          sendMoney(myController.text, receiver);
+                          loadWheel();
+                          sendMoney(int.tryParse(myController.text), receiver);
                           myController.clear();
+                          _autovalidate = false;
                         })
                   ]));
     }
@@ -98,7 +153,14 @@ class _SendMoneyState extends State<SendMoney> {
                       ),
                       onPressed: () {
                         Navigator.pop(context);
-                        confirmSend(receiver);
+                        if (int.tryParse(myController.text) == null) {
+                          scaffoldKey.currentState.showSnackBar(new SnackBar(
+                              content:
+                                  new Text("Please enter a valid amount")));
+                          myController.clear();
+                        } else {
+                          confirmSend(receiver);
+                        }
                       })
                 ]);
           });
@@ -134,56 +196,60 @@ class _SendMoneyState extends State<SendMoney> {
       }
     }
 
-    return new SingleChildScrollView(
-        child: new Container(
-            height: screenSize.height < 500 ? 500.0 : screenSize.height - 140.0,
-            child: new Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  new Text("Scan a MahaloMe QR code",
-                      style:
-                          new TextStyle(color: Colors.black54, fontSize: 19.0)),
-                  new SizedBox(height: 50.0),
-                  new Container(
-                      width: 200.0,
-                      height: 200.0,
-                      child: new RaisedButton(
-                          onPressed: scan,
-                          shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(20.0)),
-                          color: Colors.white,
-                          child: new Center(
-                            child: new Icon(
-                              Icons.camera_alt,
-                              size: 100.0,
-                              color: Colors.grey,
+    return sendingMoney
+        ? loader
+        : new SingleChildScrollView(
+            child: new Container(
+                height:
+                    screenSize.height < 500 ? 500.0 : screenSize.height - 140.0,
+                child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Text("Scan a MahaloMe QR code",
+                          style: new TextStyle(
+                              color: Colors.black54, fontSize: 19.0)),
+                      new SizedBox(height: 50.0),
+                      new Container(
+                          width: 200.0,
+                          height: 200.0,
+                          child: new RaisedButton(
+                              onPressed: scan,
+                              shape: new RoundedRectangleBorder(
+                                  borderRadius:
+                                      new BorderRadius.circular(20.0)),
+                              color: Colors.white,
+                              child: new Center(
+                                child: new Icon(
+                                  Icons.camera_alt,
+                                  size: 100.0,
+                                  color: Colors.grey,
+                                ),
+                              ))),
+                      new SizedBox(height: 70.0),
+                      new Container(
+                          width: 300.0,
+                          child: new Form(
+                            key: _formKey,
+                            child: new TextFormField(
+                              onFieldSubmitted: (id) {
+                                _autovalidate = true;
+                                if (_formKey.currentState.validate()) {
+                                  // open up dialogue to get amount
+                                  _showDialog(id.toUpperCase());
+                                  print("Attempting to send money to" +
+                                      id.toUpperCase());
+                                }
+                              },
+                              decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                icon: Icon(Icons.input),
+                                labelText: 'MahaloMe ID',
+                              ),
+                              keyboardType: TextInputType.text,
+                              autovalidate: _autovalidate,
+                              validator: validations.validateMahaloMeID,
                             ),
-                          ))),
-                  new SizedBox(height: 70.0),
-                  new Container(
-                      width: 300.0,
-                      child: new Form(
-                        key: _formKey,
-                        child: new TextFormField(
-                          onFieldSubmitted: (id) {
-                            _autovalidate = true;
-                            if (_formKey.currentState.validate()) {
-                              // open up dialogue to get amount
-                              _showDialog(id.toUpperCase());
-                              print("Attempting to send money to" +
-                                  id.toUpperCase());
-                            }
-                          },
-                          decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            icon: Icon(Icons.input),
-                            labelText: 'MahaloMe ID',
-                          ),
-                          keyboardType: TextInputType.text,
-                          autovalidate: _autovalidate,
-                          validator: validations.validateMahaloMeID,
-                        ),
-                      ))
-                ])));
+                          ))
+                    ])));
   }
 }

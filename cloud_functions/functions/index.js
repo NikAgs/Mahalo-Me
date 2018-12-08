@@ -144,11 +144,64 @@ exports.deletePaymentSource = functions.firestore.document('/users/{userId}/dele
 
 // When a user deletes their account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
-  await admin.firestore().collection('users').doc(user.displayName).delete();
-  const snapshot = await admin.database().ref('/users/' + user.displayName).once('value');
-  const customerId = snapshot.val().customer_id;
-  console.log('Deleting Stripe user: ' + customerId);
-  return stripe.customers.del(customerId);
+  try {
+    const snapshot = await admin.database().ref('/users/' + user.displayName).once('value');
+    const customerId = snapshot.val().customer_id;
+    console.log('Deleting Stripe user: ' + customerId);
+    stripe.customers.del(customerId);
+  } finally {
+    await admin.firestore().collection('users').doc(user.displayName).set();
+    admin.firestore().collection('users').doc(user.displayName).delete();
+  }
+});
+
+exports.transferMoney = functions.firestore.document('/users/{userId}/sent/{pushId}').onCreate(async (snap, context) => {
+  const sender = context.params.userId;
+  const receiver = snap.data().receiver;
+  const amount = Number(snap.data().amount);
+  const errorLocation = db.collection('users').doc(sender).collection('sent').doc(context.params.pushId);
+
+  try {
+    if (isNaN(amount) || (amount < 0)) {
+      return errorLocation.set({
+        error: "Amount must be > 0"
+      }, { merge: true });
+    }
+
+    const senderBalance = Number((await db.collection('balances').doc(sender).get()).data().balance);
+    const receiverBalance = Number((await db.collection('balances').doc(receiver).get()).data().balance);
+
+    if (senderBalance < amount) {
+      return errorLocation.set({
+        error: "Your balance isn't high enough to send $" + amount
+      }, { merge: true });
+    }
+
+    await db.collection('balances').doc(receiver).set({
+      balance: receiverBalance + amount
+    }, { merge: true });
+
+    await db.collection('balances').doc(sender).set({
+      balance: senderBalance - amount
+    }, { merge: true });
+
+
+    await db.collection('users').doc(receiver).collection('received').add({
+      sender: sender,
+      amount: amount,
+      timestamp: new Date()
+    });
+
+    return db.collection('users').doc(sender).collection('sent').doc(context.params.pushId).set({
+      timestamp: new Date()
+    }, { merge: true });
+
+  } catch (e) {
+    console.log(e);
+    return errorLocation.set({
+      error: "There was a problem transferring to MahaloMe user: " + receiver
+    }, { merge: true });
+  }
 });
 
 

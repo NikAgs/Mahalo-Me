@@ -7,6 +7,7 @@ import 'screens/SignUp/index.dart';
 import 'screens/Home/index.dart';
 import 'screens/Payment/payments.dart';
 import 'screens/Payment/card.dart';
+import 'screens/Reports/index.dart';
 
 void main() {
   var routes = <String, WidgetBuilder>{
@@ -14,7 +15,8 @@ void main() {
     "/HomePage": (BuildContext context) => new HomeScreen(),
     "/Login": (BuildContext context) => new LoginScreen(),
     "/PaymentMethods": (BuildContext contect) => new PaymentMethodsScreen(),
-    "/AddCard": (BuildContext context) => new AddCardScreen()
+    "/AddCard": (BuildContext context) => new AddCardScreen(),
+    "/Reports": (BuildContext context) => new ReportsScreen()
   };
 
   runApp(new MaterialApp(

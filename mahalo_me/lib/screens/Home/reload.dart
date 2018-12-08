@@ -48,7 +48,7 @@ class _ReloadMoneyState extends State<ReloadMoney> {
   void initState() {
     super.initState();
 
-    // Dialogue for charging card unsuccessfully
+    // Listener for status of charging card
     Firestore.instance
         .collection('users')
         .document(firebaseUser.displayName)

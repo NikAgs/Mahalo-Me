@@ -121,7 +121,7 @@ class HomeScreenState extends State<HomeScreen> {
                     leading: Icon(Icons.equalizer),
                     title: Text('Reports'),
                     onTap: () {
-                      print("You wanna see sum reports?");
+                      Navigator.pushNamed(context, "/Reports");
                     },
                   ),
                   ListTile(
