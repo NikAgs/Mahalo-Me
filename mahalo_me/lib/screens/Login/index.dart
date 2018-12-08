@@ -7,6 +7,7 @@ import '../../components/Buttons/roundedButton.dart';
 import '../../services/validations.dart';
 import '../../services/authentication.dart';
 import '../../theme/style.dart' as Theme;
+import '../../global.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key}) : super(key: key);
@@ -24,9 +25,32 @@ class LoginScreenState extends State<LoginScreen> {
   UserAuth userAuth = new UserAuth();
   bool autovalidate = false;
   Validations validations = new Validations();
+  bool _loggingIn = false;
+
+  @override
+  initState() {
+    loginScaffoldKey = _scaffoldKey;
+    super.initState();
+  }
 
   _onPressed() {
     print("button clicked");
+  }
+
+  void loadWheel() {
+    if (this.mounted) {
+      setState(() {
+        _loggingIn = true;
+      });
+    }
+  }
+
+  void killWheel() {
+    if (this.mounted) {
+      setState(() {
+        _loggingIn = false;
+      });
+    }
   }
 
   onPressed(String routeName) {
@@ -44,13 +68,16 @@ class LoginScreenState extends State<LoginScreen> {
       autovalidate = true; // Start validating on every change.
       showInSnackBar('Please fix the errors in red before submitting.');
     } else {
+      loadWheel();
       form.save();
       userAuth.verifyUser(user).then((onValue) {
         if (onValue == "Login Successfull")
           Navigator.pushReplacementNamed(context, "/HomePage");
         else
-          showInSnackBar(onValue);
+          killWheel();
+        showInSnackBar(onValue);
       }).catchError((onError) {
+        killWheel();
         showInSnackBar(onError.message);
       });
     }
@@ -64,110 +91,114 @@ class LoginScreenState extends State<LoginScreen> {
     Validations validations = new Validations();
     return new Scaffold(
         key: _scaffoldKey,
-        body: new SingleChildScrollView(
-            controller: scrollController,
-            child: new Container(
-              padding: new EdgeInsets.all(16.0),
-              decoration: new BoxDecoration(
-                gradient: new LinearGradient(
-                    colors: [
-                      Theme.ThemeColors.lightPurple,
-                      Theme.ThemeColors.cyan
-                    ],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 1.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp),
-              ),
-              child: new Column(
-                children: <Widget>[
-                  new Container(
-                    height: screenSize.height / 2,
-                    child: new Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new Center(
-                            child: new Image(
-                                image: new ExactAssetImage("assets/logo.png"),
-                                height: (screenSize.height < 500)
-                                    ? screenSize.height / 3
-                                    : 250.0))
-                      ],
-                    ),
+        body: _loggingIn
+            ? Theme.loader
+            : new SingleChildScrollView(
+                controller: scrollController,
+                child: new Container(
+                  padding: new EdgeInsets.all(16.0),
+                  decoration: new BoxDecoration(
+                    gradient: new LinearGradient(
+                        colors: [
+                          Theme.ThemeColors.lightPurple,
+                          Theme.ThemeColors.cyan
+                        ],
+                        begin: const FractionalOffset(0.0, 0.0),
+                        end: const FractionalOffset(1.0, 1.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp),
                   ),
-                  new Container(
-                    height: screenSize.height < 500
-                        ? screenSize.height / (1.5)
-                        : screenSize.height / 2,
-                    child: new Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new Form(
-                          key: formKey,
-                          autovalidate: autovalidate,
-                          child: new Column(
-                            children: <Widget>[
-                              new InputField(
-                                  hintText: "Email",
-                                  obscureText: false,
-                                  textInputType: TextInputType.emailAddress,
-                                  textStyle: textStyle,
-                                  textFieldColor:
-                                      const Color.fromRGBO(255, 255, 255, 0.2),
-                                  icon: Icons.mail_outline,
-                                  iconColor: Colors.white,
-                                  bottomMargin: 25.0,
-                                  validateFunction: validations.validateEmail,
-                                  onSaved: (String email) {
-                                    user.email = email;
-                                  }),
-                              new InputField(
-                                  hintText: "Password",
-                                  obscureText: true,
-                                  textInputType: TextInputType.text,
-                                  textStyle: textStyle,
-                                  textFieldColor:
-                                      const Color.fromRGBO(255, 255, 255, 0.2),
-                                  icon: Icons.lock_open,
-                                  iconColor: Colors.white,
-                                  bottomMargin: 30.0,
-                                  validateFunction:
-                                      validations.validatePassword,
-                                  onSaved: (String password) {
-                                    user.password = password;
-                                  }),
-                              new RoundedButton(
-                                  buttonName: "Get Started",
-                                  onTap: _handleSubmitted,
-                                  width: screenSize.width,
-                                  height: 50.0,
-                                  bottomMargin: 10.0,
-                                  borderWidth: 0.0,
-                                  buttonColor: Theme.ThemeColors.purple,
-                                  borderRadius: 30.0),
-                            ],
-                          ),
-                        ),
-                        new Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: new Column(
+                    children: <Widget>[
+                      new Container(
+                        height: screenSize.height / 2,
+                        child: new Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            new TextButton(
-                                buttonName: "Create Account",
-                                onPressed: () => onPressed("/SignUp"),
-                                buttonTextStyle: buttonTextStyle),
-                            new TextButton(
-                                buttonName: "Need Help?",
-                                onPressed: _onPressed,
-                                buttonTextStyle: buttonTextStyle)
+                            new Center(
+                                child: new Image(
+                                    image:
+                                        new ExactAssetImage("assets/logo.png"),
+                                    height: (screenSize.height < 500)
+                                        ? screenSize.height / 3
+                                        : 250.0))
                           ],
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            )));
+                        ),
+                      ),
+                      new Container(
+                        height: screenSize.height < 500
+                            ? screenSize.height / (1.5)
+                            : screenSize.height / 2,
+                        child: new Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            new Form(
+                              key: formKey,
+                              autovalidate: autovalidate,
+                              child: new Column(
+                                children: <Widget>[
+                                  new InputField(
+                                      hintText: "Email",
+                                      obscureText: false,
+                                      textInputType: TextInputType.emailAddress,
+                                      textStyle: textStyle,
+                                      textFieldColor: const Color.fromRGBO(
+                                          255, 255, 255, 0.2),
+                                      icon: Icons.mail_outline,
+                                      iconColor: Colors.white,
+                                      bottomMargin: 25.0,
+                                      validateFunction:
+                                          validations.validateEmail,
+                                      onSaved: (String email) {
+                                        user.email = email;
+                                      }),
+                                  new InputField(
+                                      hintText: "Password",
+                                      obscureText: true,
+                                      textInputType: TextInputType.text,
+                                      textStyle: textStyle,
+                                      textFieldColor: const Color.fromRGBO(
+                                          255, 255, 255, 0.2),
+                                      icon: Icons.lock_open,
+                                      iconColor: Colors.white,
+                                      bottomMargin: 30.0,
+                                      validateFunction:
+                                          validations.validatePassword,
+                                      onSaved: (String password) {
+                                        user.password = password;
+                                      }),
+                                  new RoundedButton(
+                                      buttonName: "Get Started",
+                                      onTap: _handleSubmitted,
+                                      width: screenSize.width,
+                                      height: 50.0,
+                                      bottomMargin: 10.0,
+                                      borderWidth: 0.0,
+                                      buttonColor: Theme.ThemeColors.purple,
+                                      borderRadius: 30.0),
+                                ],
+                              ),
+                            ),
+                            new Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                new TextButton(
+                                    buttonName: "Create Account",
+                                    onPressed: () => onPressed("/SignUp"),
+                                    buttonTextStyle: buttonTextStyle),
+                                new TextButton(
+                                    buttonName: "Need Help?",
+                                    onPressed: _onPressed,
+                                    buttonTextStyle: buttonTextStyle)
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                )));
   }
 }

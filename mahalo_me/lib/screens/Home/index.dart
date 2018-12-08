@@ -23,7 +23,7 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    // Dialogue for charging card unsuccessfully
+    // Listener for updating the balance displayed
     Firestore.instance
         .collection('balances')
         .document(firebaseUser.displayName)

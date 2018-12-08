@@ -6,6 +6,7 @@ import '../../components/Buttons/roundedButton.dart';
 import '../../services/validations.dart';
 import '../../services/authentication.dart';
 import '../../theme/style.dart' as Theme;
+import '../../global.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key key}) : super(key: key);
@@ -23,6 +24,23 @@ class SignUpScreenState extends State<SignUpScreen> {
   UserAuth userAuth = new UserAuth();
   bool _autovalidate = false;
   Validations _validations = new Validations();
+  bool _signingUp = false;
+
+  void loadWheel() {
+    if (this.mounted) {
+      setState(() {
+        _signingUp = true;
+      });
+    }
+  }
+
+  void killWheel() {
+    if (this.mounted) {
+      setState(() {
+        _signingUp = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -51,10 +69,15 @@ class SignUpScreenState extends State<SignUpScreen> {
       _autovalidate = true; // Start validating on every change.
       showInSnackBar('Please fix the errors in red before submitting.');
     } else {
+      loadWheel();
       form.save();
       userAuth.createUser(newUser).then((onValue) {
-        showInSnackBar(onValue);
+        killWheel();
+        loginScaffoldKey.currentState
+            .showSnackBar(new SnackBar(content: new Text(onValue)));
+        Navigator.of(context).pop();
       }).catchError((onError) {
+        killWheel();
         showInSnackBar(onError.message);
       });
     }
@@ -65,129 +88,133 @@ class SignUpScreenState extends State<SignUpScreen> {
     Size screenSize = MediaQuery.of(context).size;
     return new Scaffold(
         key: _scaffoldKey,
-        body: new SingleChildScrollView(
-          child: new Container(
-            padding: new EdgeInsets.all(16.0),
-            decoration: new BoxDecoration(
-              gradient: new LinearGradient(
-                  colors: [
-                    Theme.ThemeColors.lighterPurple,
-                    Theme.ThemeColors.cyan,
-                  ],
-                  begin: const FractionalOffset(0.0, 0.0),
-                  end: const FractionalOffset(1.0, 1.0),
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp),
-            ),
-            child: new Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                new SizedBox(height: 20.0),
-                new Container(
-                  height: 30.0,
-                  width: screenSize.width,
-                  child: new IconButton(
-                    iconSize: 28.0,
-                    alignment: Alignment.bottomLeft,
-                    icon: new Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+        body: _signingUp
+            ? Theme.loader
+            : new SingleChildScrollView(
+                child: new Container(
+                  padding: new EdgeInsets.all(16.0),
+                  decoration: new BoxDecoration(
+                    gradient: new LinearGradient(
+                        colors: [
+                          Theme.ThemeColors.lighterPurple,
+                          Theme.ThemeColors.cyan,
+                        ],
+                        begin: const FractionalOffset(0.0, 0.0),
+                        end: const FractionalOffset(1.0, 1.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp),
                   ),
-                ),
-                new SizedBox(
-                    height: (screenSize.height / 2) - 50.0,
-                    child: new Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new Text("CREATE ACCOUNT",
-                            textAlign: TextAlign.center,
-                            style: new TextStyle(
-                              color: Colors.white,
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.bold,
-                            ))
-                      ],
-                    )),
-                new SizedBox(
-                  height: screenSize.height < 500
-                      ? screenSize.height / (1.2)
-                      : screenSize.height / 2,
                   child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      new Form(
-                          key: _formKey,
-                          autovalidate: _autovalidate,
-                          //onWillPop: _warnUserAboutInvalidData,
+                      new SizedBox(height: 20.0),
+                      new Container(
+                        height: 30.0,
+                        width: screenSize.width,
+                        child: new IconButton(
+                          iconSize: 28.0,
+                          alignment: Alignment.bottomLeft,
+                          icon: new Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                      new SizedBox(
+                          height: (screenSize.height / 2) - 50.0,
                           child: new Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              new InputField(
-                                  hintText: "Email",
-                                  obscureText: false,
-                                  textInputType: TextInputType.emailAddress,
-                                  textStyle: Theme.textStyle,
-                                  textFieldColor:
-                                      const Color.fromRGBO(255, 255, 255, 0.2),
-                                  icon: Icons.mail_outline,
-                                  iconColor: Colors.white,
-                                  bottomMargin: 25.0,
-                                  validateFunction: _validations.validateEmail,
-                                  onSaved: (String email) {
-                                    newUser.email = email;
-                                  }),
-                              new InputField(
-                                  controller: myController,
-                                  hintText: "Password",
-                                  obscureText: true,
-                                  textInputType: TextInputType.text,
-                                  textStyle: Theme.textStyle,
-                                  textFieldColor:
-                                      const Color.fromRGBO(255, 255, 255, 0.2),
-                                  icon: Icons.lock_open,
-                                  iconColor: Colors.white,
-                                  bottomMargin: 25.0,
-                                  validateFunction:
-                                      _validations.validatePassword,
-                                  onSaved: (String password) {
-                                    newUser.password = password;
-                                  }),
-                              new InputField(
-                                  hintText: "Confirm Password",
-                                  obscureText: true,
-                                  textInputType: TextInputType.text,
-                                  textStyle: Theme.textStyle,
-                                  textFieldColor:
-                                      const Color.fromRGBO(255, 255, 255, 0.2),
-                                  icon: Icons.lock_open,
-                                  iconColor: Colors.white,
-                                  bottomMargin: 25.0,
-                                  validateFunction: confirmPassword,
-                                  onSaved: (String password) {
-                                    newUser.confirmPassword = password;
-                                  }),
-                              new RoundedButton(
-                                buttonName: "Continue",
-                                onTap: _handleSubmitted,
-                                width: screenSize.width,
-                                height: 50.0,
-                                bottomMargin: 10.0,
-                                borderWidth: 1.0,
-                                borderRadius: 30.0,
-                              )
+                              new Text("CREATE ACCOUNT",
+                                  textAlign: TextAlign.center,
+                                  style: new TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22.0,
+                                    fontWeight: FontWeight.bold,
+                                  ))
                             ],
                           )),
-                      new TextButton(
-                        buttonName: "Terms & Condition",
-                        onPressed: _onPressed,
-                        buttonTextStyle: Theme.buttonTextStyle,
+                      new SizedBox(
+                        height: screenSize.height < 500
+                            ? screenSize.height / (1.2)
+                            : screenSize.height / 2,
+                        child: new Column(
+                          children: <Widget>[
+                            new Form(
+                                key: _formKey,
+                                autovalidate: _autovalidate,
+                                //onWillPop: _warnUserAboutInvalidData,
+                                child: new Column(
+                                  children: <Widget>[
+                                    new InputField(
+                                        hintText: "Email",
+                                        obscureText: false,
+                                        textInputType:
+                                            TextInputType.emailAddress,
+                                        textStyle: Theme.textStyle,
+                                        textFieldColor: const Color.fromRGBO(
+                                            255, 255, 255, 0.2),
+                                        icon: Icons.mail_outline,
+                                        iconColor: Colors.white,
+                                        bottomMargin: 25.0,
+                                        validateFunction:
+                                            _validations.validateEmail,
+                                        onSaved: (String email) {
+                                          newUser.email = email;
+                                        }),
+                                    new InputField(
+                                        controller: myController,
+                                        hintText: "Password",
+                                        obscureText: true,
+                                        textInputType: TextInputType.text,
+                                        textStyle: Theme.textStyle,
+                                        textFieldColor: const Color.fromRGBO(
+                                            255, 255, 255, 0.2),
+                                        icon: Icons.lock_open,
+                                        iconColor: Colors.white,
+                                        bottomMargin: 25.0,
+                                        validateFunction:
+                                            _validations.validatePassword,
+                                        onSaved: (String password) {
+                                          newUser.password = password;
+                                        }),
+                                    new InputField(
+                                        hintText: "Confirm Password",
+                                        obscureText: true,
+                                        textInputType: TextInputType.text,
+                                        textStyle: Theme.textStyle,
+                                        textFieldColor: const Color.fromRGBO(
+                                            255, 255, 255, 0.2),
+                                        icon: Icons.lock_open,
+                                        iconColor: Colors.white,
+                                        bottomMargin: 25.0,
+                                        validateFunction: confirmPassword,
+                                        onSaved: (String password) {
+                                          newUser.confirmPassword = password;
+                                        }),
+                                    new RoundedButton(
+                                      buttonName: "Continue",
+                                      onTap: _handleSubmitted,
+                                      width: screenSize.width,
+                                      height: 50.0,
+                                      bottomMargin: 10.0,
+                                      borderWidth: 1.0,
+                                      borderRadius: 30.0,
+                                    )
+                                  ],
+                                )),
+                            new TextButton(
+                              buttonName: "Terms & Condition",
+                              onPressed: _onPressed,
+                              buttonTextStyle: Theme.buttonTextStyle,
+                            )
+                          ],
+                        ),
                       )
                     ],
                   ),
-                )
-              ],
-            ),
-          ),
-        ));
+                ),
+              ));
   }
 }

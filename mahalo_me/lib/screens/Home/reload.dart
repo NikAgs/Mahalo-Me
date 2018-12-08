@@ -152,12 +152,14 @@ class _ReloadMoneyState extends State<ReloadMoney> {
                                                 " in your MahaloMe account?"),
                                         actions: <Widget>[
                                           FlatButton(
-                                              child: const Text("No"),
+                                              textColor: Theme.ThemeColors.cyan,
+                                              child: const Text("NO"),
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               }),
                                           FlatButton(
-                                              child: const Text("Yes"),
+                                              textColor: Theme.ThemeColors.cyan,
+                                              child: const Text("YES"),
                                               onPressed: () async {
                                                 Navigator.pop(context);
                                                 // Charge the card here

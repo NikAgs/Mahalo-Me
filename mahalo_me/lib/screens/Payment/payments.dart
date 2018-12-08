@@ -156,12 +156,14 @@ class CardListItem extends StatelessWidget {
                                         '?'),
                                 actions: <Widget>[
                                   FlatButton(
-                                      child: const Text('No'),
+                                      textColor: Theme.ThemeColors.cyan,
+                                      child: const Text('NO'),
                                       onPressed: () {
                                         Navigator.pop(context);
                                       }),
                                   FlatButton(
-                                      child: const Text('Yes'),
+                                      textColor: Theme.ThemeColors.cyan,
+                                      child: const Text('YES'),
                                       onPressed: () {
                                         _load();
                                         Navigator.pop(context);

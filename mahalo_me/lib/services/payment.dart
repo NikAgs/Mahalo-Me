@@ -54,3 +54,11 @@ Future<void> chargeCard(amount, killWheel) async {
         content: new Text("There was a problem proccessing the charge")));
   }
 }
+
+Future<void> sendMoney(amount, receiver) async {
+  await Firestore.instance
+      .collection('users')
+      .document(firebaseUser.displayName)
+      .collection('sent')
+      .add({"amount": amount, "receiver": receiver});
+}

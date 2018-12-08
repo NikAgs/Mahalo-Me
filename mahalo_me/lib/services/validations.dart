@@ -62,6 +62,16 @@ class Validations {
     if (input.length < 5) return "Please enter a valid Postal Code";
     return null;
   }
+
+  String validateMahaloMeID(String input) {
+    if (input.isEmpty) return "Please enter a MahaloMe ID";
+    if (input.length != 6) return "MahaloMe IDs are 6 characters long";
+    final RegExp nameExp = RegExp("^[a-zA-Z0-9]*\$");
+    if (!nameExp.hasMatch(input))
+      return 'Please enter only alphanumeric characters';
+
+    return null;
+  }
 }
 
 final Map _INDUSTRY_IDENTIFIER_MAP = {
