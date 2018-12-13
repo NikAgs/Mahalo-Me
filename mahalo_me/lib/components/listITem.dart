@@ -7,7 +7,10 @@ class CardListItem extends StatelessWidget {
 
   CardListItem(this._user, this._amount, this._timestamp);
 
+  
+
   String formatTimestamp(DateTime timestamp) {
+    print(timestamp);
     DateTime now = DateTime.now();
     bool sameDay = now.day == timestamp.day &&
         now.month == timestamp.month &&

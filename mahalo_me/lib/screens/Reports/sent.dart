@@ -26,8 +26,10 @@ class _SentReportsState extends State<SentReports> {
               itemCount: snapshot.data.documents.length,
               itemBuilder: (context, index) {
                 DocumentSnapshot ds = snapshot.data.documents[index];
-                return new CardListItem(ds.data['receiver'], ds.data['amount'].toString(),
-                    ds.data['timestamp']);
+                if (!ds.data.containsKey("error")) {
+                  return new CardListItem(ds.data['receiver'],
+                      ds.data['amount'].toString(), ds.data['timestamp']);
+                }
               });
         },
       ),

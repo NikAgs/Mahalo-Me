@@ -26,8 +26,10 @@ class _ReceivedReportsState extends State<ReceivedReports> {
               itemCount: snapshot.data.documents.length,
               itemBuilder: (context, index) {
                 DocumentSnapshot ds = snapshot.data.documents[index];
-                return new CardListItem(ds.data['sender'],
-                    ds.data['amount'].toString(), ds.data['timestamp']);
+                 if (!ds.data.containsKey("error")) {
+                  return new CardListItem(ds.data['sender'],
+                      ds.data['amount'].toString(), ds.data['timestamp']);
+                }
               });
         },
       ),

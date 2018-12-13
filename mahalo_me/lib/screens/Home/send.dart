@@ -53,6 +53,8 @@ class _SendMoneyState extends State<SendMoney> {
           if (data.length == 2)
             return; // this catches the transfer initially created by the client
           killWheel();
+          print(data);
+          print("\n");
           if (data.containsKey("error")) {
             scaffoldKey.currentState
                 .showSnackBar(new SnackBar(content: new Text(data['error'])));
