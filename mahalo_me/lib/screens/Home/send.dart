@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,6 +21,7 @@ class _SendMoneyState extends State<SendMoney> {
   Validations validations = new Validations();
   final myController = TextEditingController();
   var _transfers;
+  StreamSubscription<QuerySnapshot> _listener;
 
   void loadWheel() {
     if (this.mounted) {
@@ -41,10 +44,10 @@ class _SendMoneyState extends State<SendMoney> {
     super.initState();
 
     // Listener for status of transfer
-    Firestore.instance
+    _listener = Firestore.instance
         .collection('users')
         .document(firebaseUser.displayName)
-        .collection('sent')
+        .collection('transfers')
         .snapshots()
         .listen((snap) {
       if (_transfers != null) {
@@ -70,6 +73,13 @@ class _SendMoneyState extends State<SendMoney> {
       }
       _transfers = snap.documents.length;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    sendingMoney = false;
+    _listener.cancel();
   }
 
   @override

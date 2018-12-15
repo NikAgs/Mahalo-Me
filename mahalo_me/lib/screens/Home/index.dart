@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import "package:flutter/material.dart";
 import "../../theme/style.dart" as Theme;
 
@@ -18,13 +20,43 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   String _balance = "";
+  StreamSubscription<DocumentSnapshot> _listener;
 
   @override
   void initState() {
     super.initState();
 
-    // Listener for updating the balance displayed
     Firestore.instance
+        .collection('users')
+        .document(firebaseUser.displayName)
+        .collection('sources')
+        .getDocuments()
+        .then((sources) {
+      if (sources.documents.length == 0) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                    content: Text(
+                        "We noticed you haven't added a payment source yet. Let's get you started!"),
+                    actions: <Widget>[
+                      FlatButton(
+                          textColor: Theme.ThemeColors.cyan,
+                          child: const Text("NO THANKS"),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }),
+                      FlatButton(
+                          textColor: Theme.ThemeColors.cyan,
+                          child: const Text("OK"),
+                          onPressed: () async {
+                            Navigator.pushReplacementNamed(context, "/AddCard");
+                          })
+                    ]));
+      }
+    });
+
+    // Listener for updating the balance displayed
+    _listener = Firestore.instance
         .collection('balances')
         .document(firebaseUser.displayName)
         .snapshots()
@@ -35,6 +67,12 @@ class HomeScreenState extends State<HomeScreen> {
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _listener.cancel();
   }
 
   @override
@@ -128,9 +166,9 @@ class HomeScreenState extends State<HomeScreen> {
                     leading: Icon(Icons.lock),
                     title: Text('Logout'),
                     onTap: () {
-                      FirebaseAuth.instance.signOut();
                       Navigator.pushNamedAndRemoveUntil(
                           context, "/Login", (route) => false);
+                      FirebaseAuth.instance.signOut();
                     },
                   ),
                 ],

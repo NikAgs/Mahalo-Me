@@ -155,11 +155,11 @@ exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
   }
 });
 
-exports.transferMoney = functions.firestore.document('/users/{userId}/sent/{pushId}').onCreate(async (snap, context) => {
+exports.transferMoney = functions.firestore.document('/users/{userId}/transfers/{pushId}').onCreate(async (snap, context) => {
   const sender = context.params.userId;
   const receiver = snap.data().receiver;
   const amount = Number(snap.data().amount);
-  const errorLocation = db.collection('users').doc(sender).collection('sent').doc(context.params.pushId);
+  const errorLocation = db.collection('users').doc(sender).collection('transfer').doc(context.params.pushId);
 
   try {
     if (isNaN(amount) || (amount < 0)) {
@@ -192,9 +192,15 @@ exports.transferMoney = functions.firestore.document('/users/{userId}/sent/{push
       timestamp: new Date()
     });
 
-    return db.collection('users').doc(sender).collection('sent').doc(context.params.pushId).set({
+    await db.collection('users').doc(sender).collection('transfers').doc(context.params.pushId).set({
       timestamp: new Date()
     }, { merge: true });
+
+    return db.collection('users').doc(sender).collection('sent').add({
+      amount: amount,
+      receiver: receiver,
+      timestamp: new Date()
+    });
 
   } catch (e) {
     console.log(e);

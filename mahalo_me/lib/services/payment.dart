@@ -59,6 +59,6 @@ Future<void> sendMoney(amount, receiver) async {
   await Firestore.instance
       .collection('users')
       .document(firebaseUser.displayName)
-      .collection('sent')
+      .collection('transfers')
       .add({"amount": amount, "receiver": receiver});
 }

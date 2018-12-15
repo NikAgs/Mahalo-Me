@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +15,8 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   var _cards; // maintains the number of credit cards the user has
   var _tokens; // maintains the number of tokens the user has
+  StreamSubscription<QuerySnapshot> _sourceListener;
+  StreamSubscription<QuerySnapshot> _tokenListener;
 
   void loadWheel() {
     if (this.mounted) {
@@ -35,7 +39,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     super.initState();
 
     // Dialogue for adding card successfully
-    Firestore.instance
+    _sourceListener = Firestore.instance
         .collection('users')
         .document(firebaseUser.displayName)
         .collection('sources')
@@ -52,7 +56,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     });
 
     // Dialogue for adding card unsuccessfully
-    Firestore.instance
+    _tokenListener = Firestore.instance
         .collection('users')
         .document(firebaseUser.displayName)
         .collection('tokens')
@@ -74,6 +78,14 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    paymentProcessing = false;
+    _tokenListener.cancel();
+    _sourceListener.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
@@ -83,7 +95,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
             backgroundColor: Theme.ThemeColors.purple,
             child: Icon(Icons.add),
             onPressed: () {
-              Navigator.of(context).pushNamed('/AddCard');
+              Navigator.of(context).pushReplacementNamed('/AddCard');
             },
           ),
         ),

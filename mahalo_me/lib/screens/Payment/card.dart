@@ -189,7 +189,9 @@ class _AddCardScreenState extends State<AddCardScreen> {
                                                       _cardData.cvv,
                                                       _cardData.postalCode);
                                                   paymentProcessing = true;
-                                                  Navigator.of(context).pop();
+                                                  Navigator.of(context)
+                                                      .pushReplacementNamed(
+                                                          "/PaymentMethods");
                                                 }
                                               },
                                             )

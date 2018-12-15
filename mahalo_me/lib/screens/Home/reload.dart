@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import "package:flutter/material.dart";
 
 import "../../global.dart";
@@ -21,6 +23,7 @@ class ReloadMoney extends StatefulWidget {
 class _ReloadMoneyState extends State<ReloadMoney> {
   String _value;
   var _charges;
+  StreamSubscription<QuerySnapshot> _listener;
 
   _ReloadMoneyState(this._value);
 
@@ -49,7 +52,7 @@ class _ReloadMoneyState extends State<ReloadMoney> {
     super.initState();
 
     // Listener for status of charging card
-    Firestore.instance
+    _listener = Firestore.instance
         .collection('users')
         .document(firebaseUser.displayName)
         .collection('charges')
@@ -74,6 +77,13 @@ class _ReloadMoneyState extends State<ReloadMoney> {
       }
       _charges = snap.documents.length;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    chargeProcessing = false;
+    _listener.cancel();
   }
 
   @override
