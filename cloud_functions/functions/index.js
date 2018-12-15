@@ -159,7 +159,7 @@ exports.transferMoney = functions.firestore.document('/users/{userId}/transfers/
   const sender = context.params.userId;
   const receiver = snap.data().receiver;
   const amount = Number(snap.data().amount);
-  const errorLocation = db.collection('users').doc(sender).collection('transfer').doc(context.params.pushId);
+  const errorLocation = db.collection('users').doc(sender).collection('transfers').doc(context.params.pushId);
 
   try {
     if (isNaN(amount) || (amount < 0)) {
