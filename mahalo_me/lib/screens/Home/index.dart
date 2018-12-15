@@ -171,6 +171,13 @@ class HomeScreenState extends State<HomeScreen> {
                       FirebaseAuth.instance.signOut();
                     },
                   ),
+                  ListTile(
+                    leading: Icon(Icons.assessment),
+                    title: Text('Bank Info'),
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/Express');
+                    },
+                  ),
                 ],
               ),
             ),

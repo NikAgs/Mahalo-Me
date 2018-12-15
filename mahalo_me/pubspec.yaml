@@ -24,6 +24,7 @@ dependencies:
   barcode_scan: ^0.0.7
   qr_flutter: ^1.1.5
   stripe_api: ^1.1.0
+  flutter_webview_plugin: ^0.3.0+2
   
 
 dev_dependencies:

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'theme/style.dart';
 
+import 'screens/Payment/express.dart';
+
 import 'screens/Login/index.dart';
 import 'screens/SignUp/index.dart';
 import 'screens/Home/index.dart';
@@ -16,7 +18,8 @@ void main() {
     "/Login": (BuildContext context) => new LoginScreen(),
     "/PaymentMethods": (BuildContext contect) => new PaymentMethodsScreen(),
     "/AddCard": (BuildContext context) => new AddCardScreen(),
-    "/Reports": (BuildContext context) => new ReportsScreen()
+    "/Reports": (BuildContext context) => new ReportsScreen(),
+    "/Express": (BuildContext context) => new ExpressScreen()
   };
 
   runApp(new MaterialApp(
