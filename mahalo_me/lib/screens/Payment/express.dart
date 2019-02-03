@@ -7,7 +7,7 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import '../../theme/style.dart' as Theme;
 
 String selectedUrl =
-    'https://connect.stripe.com/express/oauth/authorize?redirect_uri=https://google.com&client_id=ca_EA3GzzP3l9Go4zdwb2vu0f5mQeT6FZkT';
+    'https://connect.stripe.com/express/oauth/authorize?redirect_uri=https://us-central1-mahalome-7294f.cloudfunctions.net/stripe/connect&client_id=ca_EA3GzzP3l9Go4zdwb2vu0f5mQeT6FZkT';
 
 class ExpressScreen extends StatefulWidget {
   const ExpressScreen({Key key, this.title}) : super(key: key);
@@ -127,11 +127,14 @@ class _ExpressScreenState extends State<ExpressScreen> {
   Widget build(BuildContext context) {
     return WebviewScaffold(
         url: selectedUrl,
+        clearCache: true,
+        clearCookies: true,
+        withLocalStorage: false,
+        appCacheEnabled: false,
         appBar: AppBar(
           title: const Text('Bank Information'),
           backgroundColor: Theme.ThemeColors.cyan,
         ),
-        withLocalStorage: true,
         hidden: true,
         initialChild: Theme.loader);
   }
