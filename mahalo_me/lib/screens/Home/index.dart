@@ -163,19 +163,26 @@ class HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                   ListTile(
+                    leading: Icon(Icons.account_balance),
+                    title: Text('Bank Info'),
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/Express');
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.attach_money),
+                    title: Text('Withdraw Funds'),
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/Withdraw');
+                    },
+                  ),
+                  ListTile(
                     leading: Icon(Icons.lock),
                     title: Text('Logout'),
                     onTap: () {
                       Navigator.pushNamedAndRemoveUntil(
                           context, "/Login", (route) => false);
                       FirebaseAuth.instance.signOut();
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.assessment),
-                    title: Text('Bank Info'),
-                    onTap: () {
-                      Navigator.of(context).pushNamed('/Express');
                     },
                   ),
                 ],

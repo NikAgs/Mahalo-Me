@@ -11,6 +11,13 @@ admin.initializeApp();
 
 var db = admin.firestore();
 
+exports.addExpressID = functions.https.onRequest((req, res) => {
+  
+  const code = req.query.code;
+
+  console.log(code);
+});
+
 exports.generateMahaloMeID = functions.auth.user().onCreate(async (user) => {
 
   var len = 6;

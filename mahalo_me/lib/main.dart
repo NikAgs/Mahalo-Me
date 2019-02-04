@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'theme/style.dart';
 
 import 'screens/Payment/express.dart';
-
 import 'screens/Login/index.dart';
 import 'screens/SignUp/index.dart';
 import 'screens/Home/index.dart';
 import 'screens/Payment/payments.dart';
 import 'screens/Payment/card.dart';
 import 'screens/Reports/index.dart';
+import 'screens/Payment/withdraw.dart';
 
 void main() {
   var routes = <String, WidgetBuilder>{
@@ -19,7 +19,8 @@ void main() {
     "/PaymentMethods": (BuildContext contect) => new PaymentMethodsScreen(),
     "/AddCard": (BuildContext context) => new AddCardScreen(),
     "/Reports": (BuildContext context) => new ReportsScreen(),
-    "/Express": (BuildContext context) => new ExpressScreen()
+    "/Express": (BuildContext context) => new ExpressScreen(),
+    "/Withdraw": (BuildContext context) => new WithdrawScreen()
   };
 
   runApp(new MaterialApp(
