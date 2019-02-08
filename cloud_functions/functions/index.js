@@ -6,16 +6,101 @@ const logging = require('@google-cloud/logging')();
 const stripe = require('stripe')(functions.config().stripe.token);
 const currency = functions.config().stripe.currency || 'USD';
 const admin = require('firebase-admin');
+var request = require('request');
 
 admin.initializeApp();
 
 var db = admin.firestore();
 
-exports.addExpressID = functions.https.onRequest((req, res) => {
+exports.addExpressID = functions.https.onRequest(async(req, res) => {
   
   const code = req.query.code;
+  const id = req.query.state;
 
-  console.log(code);
+  console.log("Auth code from Stripe Connect: " + code);
+  console.log("UserID from Stripe Connect: " + id);
+
+  var dataString = 'client_secret=' + functions.config().stripe.token + '&code=' + code + '&grant_type=authorization_code';
+
+  var options = {
+      url: 'https://connect.stripe.com/oauth/token',
+      method: 'POST',
+      body: dataString
+  };
+
+  function callback(error, response, body) {
+      if (!error && response.statusCode === 200) {
+          console.log("Response from Stripe Connect Handshake: " + body);
+          body = JSON.parse(body);
+
+          if (body.error) {
+            res.write(`<html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <title></title>
+              <link href='https://fonts.googleapis.com/css?family=Lato:300,400|Montserrat:700' rel='stylesheet' type='text/css'>
+              <style>
+                @import url(//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css);
+                @import url(//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css);
+              </style>
+              <link rel="stylesheet" href="https://2-22-4-dot-lead-pages.appspot.com/static/lp918/min/default_thank_you.css">
+              <script src="https://2-22-4-dot-lead-pages.appspot.com/static/lp918/min/jquery-1.9.1.min.js"></script>
+              <script src="https://2-22-4-dot-lead-pages.appspot.com/static/lp918/min/html5shiv.js"></script>
+            </head>
+            <body>
+              <header class="site-header" id="header">
+                <h1 class="site-header__title" data-lead-id="site-header-title">Oh No!</h1>
+              </header>
+              <div class="main-content">
+                <i class="fa fa-close main-content__checkmark" id="checkmark" style="color: red"></i>
+                <p class="main-content__body" data-lead-id="main-content-body">There was a problem with setting up your bank information. Please try again in a little while.</p>
+              </div>
+            </body>
+            </html>`);
+          } else {
+
+            const accountID = body.stripe_user_id;
+            console.log("Stripe Connect Account ID: " + accountID);
+
+            (db.collection('users').doc(id).set({
+              account_id: accountID
+            }, { merge: true }));
+            
+            res.write(`<html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <title></title>
+              <link href='https://fonts.googleapis.com/css?family=Lato:300,400|Montserrat:700' rel='stylesheet' type='text/css'>
+              <style>
+                @import url(//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css);
+                @import url(//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css);
+              </style>
+              <link rel="stylesheet" href="https://2-22-4-dot-lead-pages.appspot.com/static/lp918/min/default_thank_you.css">
+              <script src="https://2-22-4-dot-lead-pages.appspot.com/static/lp918/min/jquery-1.9.1.min.js"></script>
+              <script src="https://2-22-4-dot-lead-pages.appspot.com/static/lp918/min/html5shiv.js"></script>
+            </head>
+            <body>
+              <header class="site-header" id="header">
+                <h1 class="site-header__title" data-lead-id="site-header-title">THANK YOU!</h1>
+              </header>
+              <div class="main-content">
+                <i class="fa fa-check main-content__checkmark" id="checkmark"></i>
+                <p class="main-content__body" data-lead-id="main-content-body">Your bank information has been updated. Keep in mind, it may take a few minutes before you can withdraw from your MahaloMe balance.</p>
+              </div>
+            </body>
+            </html>`);
+          }
+          
+          res.end();
+      }
+  }
+
+  request(options, callback);
+
 });
 
 exports.generateMahaloMeID = functions.auth.user().onCreate(async (user) => {
@@ -111,6 +196,36 @@ exports.createStripeCharge = functions.firestore.document('users/{userId}/charge
   }
 });
 
+// Create a destination charge to payout user whenever a withdraw is posted to the database
+exports.payUser = functions.firestore.document('users/{userId}/withdraws/{id}').onCreate(async (snap, context) => {
+  try {
+    // Look up the Stripe account id
+    const snapshot = await admin.firestore().collection(`users`).doc(context.params.userId).get()
+    const amount = snap.data().amount;
+    console.log("Amount being withdrawn: " + amount);
+    
+    const accountID = snapshot.data().account_id;
+    console.log("Account ID: " + accountID);
+
+    var balance = (await db.collection('balances').doc(context.params.userId).get()).data().balance;
+    console.log("Account balance before withdraw");
+
+    // await (db.collection('balances').doc(context.params.userId).set({
+    //   balance: balance - amount
+    // }, { merge: true }));
+
+    console.log("Changed user: " + context.params.userId + " balance to " + balance - amount);
+
+    return;
+
+  } catch (error) {
+    // We want to capture errors and render them in a user-friendly way, while
+    // still logging an exception with StackDriver
+    console.log(error);
+    await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
+    return reportError(error, { user: context.params.userId });
+  }
+});
 
 // Add a payment source (card) for a user by writing a stripe payment source token to Realtime database
 exports.addPaymentSource = functions.firestore.document('/users/{userId}/tokens/{pushId}').onCreate(async (snap, context) => {

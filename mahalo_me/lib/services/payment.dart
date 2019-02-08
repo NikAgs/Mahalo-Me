@@ -62,3 +62,11 @@ Future<void> sendMoney(amount, receiver) async {
       .collection('transfers')
       .add({"amount": amount, "receiver": receiver});
 }
+
+Future<void> withdrawMoney(amount) async {
+  await Firestore.instance
+      .collection('users')
+      .document(firebaseUser.displayName)
+      .collection('withdraws')
+      .add({"amount": amount});
+}

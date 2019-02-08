@@ -11,5 +11,6 @@ String email;
 bool paymentProcessing = false;
 bool chargeProcessing = false;
 bool sendingMoney = false;
+bool withdrawingMoney = false;
 
 final flutterWebViewPlugin = FlutterWebviewPlugin();
