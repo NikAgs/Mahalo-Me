@@ -208,15 +208,30 @@ exports.payUser = functions.firestore.document('users/{userId}/withdraws/{id}').
     console.log("Account ID: " + accountID);
 
     var balance = (await db.collection('balances').doc(context.params.userId).get()).data().balance;
-    console.log("Account balance before withdraw");
+    console.log("Account balance before withdraw: " + balance);
 
-    // await (db.collection('balances').doc(context.params.userId).set({
-    //   balance: balance - amount
-    // }, { merge: true }));
+    if (amount > balance) {
+      return await snap.ref.set({ error: "Balance isn't high enough" }, { merge: true });
+    }
 
-    console.log("Changed user: " + context.params.userId + " balance to " + balance - amount);
+    var charge = await stripe.charges.create({
+      amount: amount * 100,
+      currency: "usd",
+      source: "tok_visa",
+      destination: {
+        account: accountID,
+      },
+    });
 
-    return;
+    console.log("Charge: " + JSON.stringify(charge, null, 2));
+
+    await (db.collection('balances').doc(context.params.userId).set({
+      balance: balance - amount
+    }, { merge: true }));
+ 
+    console.log("Changed user: " + context.params.userId.toString() + " balance to " + (balance - amount).toString());
+
+    return await snap.ref.set({ message: "Success" }, { merge: true });
 
   } catch (error) {
     // We want to capture errors and render them in a user-friendly way, while
@@ -277,6 +292,7 @@ exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
   }
 });
 
+// Transfers money between 2 users by adjusting their balances accordingly
 exports.transferMoney = functions.firestore.document('/users/{userId}/transfers/{pushId}').onCreate(async (snap, context) => {
   const sender = context.params.userId;
   const receiver = snap.data().receiver;
